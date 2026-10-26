@@ -5,30 +5,56 @@ export default function LandingPage() {
   const [showDev, setShowDev] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="min-h-screen bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-sans">
       {/* Navigation */}
-      <nav className="w-full flex items-center justify-between px-8 py-6 bg-white border-b border-slate-100">
-        <div className="font-black text-2xl text-green-900">SHaaba<span className="text-green-600">.</span></div>
-        <div className="flex gap-6 text-sm font-semibold text-slate-600">
-          <button onClick={() => setShowDemo(true)} className="hover:text-green-600">Demo</button>
-          <button onClick={() => setShowDev(true)} className="hover:text-green-600">Developer</button>
-          <a href="/billing" className="bg-green-700 text-white px-5 py-2 rounded-full hover:bg-green-800 transition">Login</a>
+      <nav className="w-full flex items-center justify-between px-8 py-6">
+        <div className="font-black text-2xl tracking-tighter">SHaaba<span className="text-emerald-200">.</span></div>
+        <div className="flex gap-8 text-sm font-medium">
+          <button onClick={() => setShowDemo(true)} className="hover:text-emerald-100">Demo</button>
+          <button onClick={() => setShowDev(true)} className="hover:text-emerald-100">Developer</button>
+          <a
+  href="/login"
+  className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-2 rounded-full hover:bg-white/20 transition"
+>
+  Login
+</a>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <main className="max-w-6xl mx-auto px-8 py-16">
-        <h1 className="text-5xl font-extrabold text-slate-900 leading-tight">
-          Maareynta Biyaha <br/> <span className="text-green-600">oo Casri ah</span>
-        </h1>
-        <p className="mt-6 text-slate-500 max-w-lg text-lg">
-          Nidaam dhammaystiran oo shirkadaha biyaha u suurtagelinaya iney biilasha maareeyaan, macaamiishana ay lacagta ku bixiyaan mobile-kooda.
-        </p>
-        
-        <div className="grid md:grid-cols-3 gap-6 mt-16">
-          <FeatureCard title="Biilasha" desc="Soo saarid iyo maareyn xogta macaamiisha." />
-          <FeatureCard title="USSD Bixinta" desc="Lacag bixin toos ah oo mobile-ka ah." />
-          <FeatureCard title="Warbixin" desc="Xisaab xir dhammaystiran oo maalinle ah." />
+      <main className="max-w-6xl mx-auto px-8 py-16 flex flex-col md:flex-row items-center gap-12">
+        <div className="flex-1">
+          <h1 className="text-5xl font-extrabold leading-tight">
+            Xalka casriga ah ee <br/> <span className="text-emerald-200">maareynta biyaha iyo biilka</span>
+          </h1>
+          <p className="mt-6 text-emerald-50 max-w-lg text-lg opacity-90">
+            Meesha ugu sareysa ee xisaabinta biilka, soo saarista warbixinnada, iyo bixinta mobile-ka. Kordhi xawaaraha maareyntaaga biyaha.
+          </p>
+          
+          <div className="flex gap-4 mt-8">
+            <button className="bg-white text-emerald-700 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-emerald-50 transition">Bilow Hadda →</button>
+            <button onClick={() => setShowDemo(true)} className="border border-white/30 px-8 py-3 rounded-full hover:bg-white/10 transition">Demo</button>
+          </div>
+        </div>
+
+        {/* Glass Card Section */}
+        <div className="flex-1 w-full bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-3xl shadow-2xl">
+           <div className="space-y-6">
+             <div className="bg-white/10 p-4 rounded-xl">
+               <h3 className="font-bold">Xawaare & Hufnaan</h3>
+               <p className="text-sm opacity-80 mt-1">Soo saar biilal, macluumaad iyo warbixino degdeg ah.</p>
+             </div>
+             <div className="grid grid-cols-2 gap-4">
+               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                 <p className="text-2xl font-bold">+20%</p>
+                 <p className="text-xs opacity-70">Hagaajinta nidaamka waxlarka.</p>
+               </div>
+               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                 <p className="text-2xl font-bold">+25K</p>
+                 <p className="text-xs opacity-70">Wixii macluumaad ah ee la falanqeeyey bishan.</p>
+               </div>
+             </div>
+           </div>
         </div>
       </main>
 
@@ -38,22 +64,12 @@ export default function LandingPage() {
   );
 }
 
-function FeatureCard({ title, desc }) {
-  return (
-    <div className="p-8 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition">
-      <h3 className="font-bold text-lg text-green-900">{title}</h3>
-      <p className="text-slate-500 text-sm mt-2">{desc}</p>
-    </div>
-  );
-}
-
 function DemoModal({ close }) {
   const [step, setStep] = useState(1);
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white p-8 rounded-3xl w-full max-w-md shadow-2xl">
-        <h2 className="text-xl font-bold mb-4 text-green-900">Pay Bill Now</h2>
-        
+      <div className="bg-white p-8 rounded-3xl w-full max-w-md shadow-2xl text-slate-900">
+        <h2 className="text-xl font-bold mb-4">Pay Bill Now</h2>
         {step === 1 ? (
           <div className="space-y-4">
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
@@ -64,17 +80,13 @@ function DemoModal({ close }) {
               </div>
               <p className="mt-2 text-green-700 font-bold">Consumed Units: 25</p>
             </div>
-            
             <input type="text" placeholder="Number (e.g. 063...)" className="w-full p-3 border rounded-xl" />
-            <input type="number" placeholder="Lacagta ($)" className="w-full p-3 border rounded-xl" />
-            
-            <button onClick={() => setStep(2)} className="w-full bg-green-700 text-white p-3 rounded-xl font-bold hover:bg-green-800">Pay Now</button>
+            <button onClick={() => setStep(2)} className="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold hover:bg-emerald-700">Pay Now</button>
           </div>
         ) : (
           <div className="text-center py-6">
-            <div className="text-green-600 text-5xl mb-4">✓</div>
-            <h3 className="font-bold text-xl text-green-900">Lacagta waa la helay!</h3>
-            <p className="text-slate-500 mt-2 text-sm">Waad ku mahadsantahay bixinta biilkaaga.</p>
+            <div className="text-emerald-600 text-5xl mb-4">✓</div>
+            <h3 className="font-bold text-xl">Lacagta waa la helay!</h3>
           </div>
         )}
         <button onClick={close} className="mt-6 text-slate-400 w-full hover:text-slate-600">Xir</button>
@@ -86,13 +98,10 @@ function DemoModal({ close }) {
 function DevModal({ close }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white p-8 rounded-3xl w-full max-w-sm text-center">
-        <div className="w-20 h-20 bg-green-100 rounded-full mx-auto mb-4" />
+      <div className="bg-white p-8 rounded-3xl w-full max-w-sm text-center text-slate-900">
+        <div className="w-20 h-20 bg-emerald-100 rounded-full mx-auto mb-4" />
         <h2 className="font-bold text-xl">Abdisalam M. Muhumed</h2>
         <p className="text-slate-500 text-sm mt-1">Software Architect</p>
-        <div className="mt-6 flex gap-4 justify-center">
-          <a href="mailto:apdizalam.mohameth@gmail.com" className="text-green-700 font-bold underline">Email</a>
-        </div>
         <button onClick={close} className="mt-6 text-slate-400">Xir</button>
       </div>
     </div>
