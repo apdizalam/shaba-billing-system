@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function LandingPage() {
   const [showDemo, setShowDemo] = useState(false);
@@ -12,12 +13,12 @@ export default function LandingPage() {
         <div className="flex gap-8 text-sm font-medium">
           <button onClick={() => setShowDemo(true)} className="hover:text-emerald-100">Demo</button>
           <button onClick={() => setShowDev(true)} className="hover:text-emerald-100">Developer</button>
-          <a
-  href="/login"
-  className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-2 rounded-full hover:bg-white/20 transition"
->
-  Login
-</a>
+          <Link
+            to="/login"
+            className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-2 rounded-full hover:bg-white/20 transition"
+          >
+            Login
+          </Link>
         </div>
       </nav>
 
