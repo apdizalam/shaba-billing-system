@@ -6,10 +6,9 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-  origin: [
-    'https://shaba-water-billing-system.vercel.app',
-    /https:\/\/shaba-water-billing-system-.*\.vercel\.app$/,
-  ],
+  origin: function(origin, callback) {
+    callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -287,10 +286,6 @@ app.post('/api/auth/login', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-app.get('/api/health', async (req, res) => {
-  res.status(200).json({ message: "Service is running smoothly." });
-} );
 
 // --- AUTH/ME (return current user profile from token) ---
 
