@@ -38,7 +38,16 @@ const createAdmin = async () => {
         username: { $in: [username, usernameValue] },
     });
 
-    if (existingManager || existingCustomer) {
+    if (existingManager) {
+        if (existingManager.role === 'admin') {
+            console.log(`Admin account already exists. Sign in with username: ${username}`);
+            return;
+        }
+
+        throw new Error(`The username "${username}" is already in use.`);
+    }
+
+    if (existingCustomer) {
         throw new Error(`The username "${username}" is already in use.`);
     }
 
