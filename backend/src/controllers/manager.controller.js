@@ -6,11 +6,18 @@ const formatUsername = (username) => {
     return raw.startsWith('@') ? raw : `@${raw.toLowerCase()}`;
 };
 
+const managerResponse = (manager) => {
+    const result = manager.toObject();
+    delete result.password;
+    delete result.visiblePassword;
+    return result;
+};
+
 // @route   GET /api/managers
 const listManagers = async (req, res) => {
     try {
         const managers = await User.find({ role: 'manager' })
-            .select('fullName username email phone password visiblePassword _id createdAt')
+            .select('-password -visiblePassword')
             .sort({ createdAt: -1 });
         res.status(200).json(managers);
     } catch (error) {
@@ -46,7 +53,7 @@ const createManager = async (req, res) => {
             isActive: true,
         });
 
-        res.status(201).json({ success: true, manager });
+        res.status(201).json({ success: true, manager: managerResponse(manager) });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -71,7 +78,7 @@ const updateManager = async (req, res) => {
         }
 
         await manager.save();
-        res.status(200).json({ success: true, manager });
+        res.status(200).json({ success: true, manager: managerResponse(manager) });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
