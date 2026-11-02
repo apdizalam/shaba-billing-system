@@ -1,136 +1,185 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Gauge, CreditCard, BarChart2, UserPlus, LogOut, X } from 'lucide-react';
+import {
+  BarChart3,
+  CreditCard,
+  Droplet,
+  Gauge,
+  LayoutDashboard,
+  LogOut,
+  UserPlus,
+  UsersRound,
+  X,
+} from 'lucide-react';
 import { useProfile } from '../contexts/ProfileContext';
 
-export default function Sidebar({ collapsed, onClose }) {
+const readStoredUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem('user') || '{}');
+  } catch {
+    return {};
+  }
+};
+
+export default function Sidebar({ collapsed = false, onClose }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const currentPath = location.pathname;
   const { profileImage } = useProfile();
+  const [adminUser, setAdminUser] = useState(readStoredUser);
 
-  const [adminName, setAdminName] = useState("");
-  const [adminAvatar, setAdminAvatar] = useState("https://via.placeholder.com/150");
-
-  const sessionUser = (() => {
-    try {
-      return JSON.parse(localStorage.getItem('user')) || {};
-    } catch { return {}; }
-  })();
-  const role = sessionUser.role || localStorage.getItem('role') || localStorage.getItem('userRole') || 'admin';
+  const role =
+    adminUser.role ||
+    localStorage.getItem('role') ||
+    localStorage.getItem('userRole') ||
+    'admin';
+  const adminName =
+    adminUser.name ||
+    adminUser.fullName ||
+    (role === 'manager' ? 'Shaba Manager' : 'Admin User');
+  const adminEmail = adminUser.email || (role === 'manager' ? 'Manager account' : 'Administrator');
+  const avatar = adminUser.avatar || (profileImage !== '/profile.jpg' ? profileImage : '');
+  const initials = adminName
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase();
 
   useEffect(() => {
-    const syncSidebarProfile = () => {
-      const stored = JSON.parse(localStorage.getItem('user') || '{}');
-      const isManager = stored.role === 'manager' || (stored.username && stored.username !== 'admin') || role === 'manager';
-      
-      setAdminName(stored.name || (isManager ? "Shaba Manager" : "abdisalam mohamed"));
-      if (stored.avatar) {
-        setAdminAvatar(stored.avatar);
-      } else {
-        setAdminAvatar("https://via.placeholder.com/150");
-      }
-    };
-
-    syncSidebarProfile();
-    window.addEventListener("storage_profile_updated", syncSidebarProfile);
-    return () => window.removeEventListener("storage_profile_updated", syncSidebarProfile);
-  }, [role]);
+    const syncProfile = () => setAdminUser(readStoredUser());
+    syncProfile();
+    window.addEventListener('storage_profile_updated', syncProfile);
+    return () => window.removeEventListener('storage_profile_updated', syncProfile);
+  }, []);
 
   const allNav = [
     { key: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { key: 'customers', label: 'Customers', path: '/customers', icon: Users },
+    { key: 'customers', label: 'Customers', path: '/customers', icon: UsersRound },
     { key: 'meters', label: 'Meters', path: '/meters', icon: Gauge },
     { key: 'billing', label: 'Billing', path: '/billing', icon: CreditCard },
-    { key: 'reports', label: 'Reports', path: '/reports', icon: BarChart2 },
-    { key: 'managers', label: 'Manager Registration', path: '/managers/register', icon: UserPlus },
+    { key: 'reports', label: 'Reports', path: '/reports', icon: BarChart3 },
+    { key: 'managers', label: 'Manager registration', path: '/managers/register', icon: UserPlus },
   ];
 
-  const navItems = role === 'manager'
-    ? allNav.filter(item => item.key !== 'reports' && item.key !== 'managers')
-    : allNav;
+  const navItems =
+    role === 'manager'
+      ? allNav.filter((item) => item.key !== 'reports' && item.key !== 'managers')
+      : allNav;
 
   const handleSignOut = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userFullName');
-    localStorage.removeItem('username');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user');
+    [
+      'token',
+      'role',
+      'userRole',
+      'userFullName',
+      'username',
+      'userEmail',
+      'user_role',
+      'user_name',
+      'user',
+    ].forEach((key) => localStorage.removeItem(key));
     navigate('/login', { replace: true });
   };
 
   return (
-    <aside data-app-sidebar className={`print:hidden fixed left-0 top-0 bottom-0 w-full max-w-[85vw] bg-white z-40 transition-transform ${collapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'} md:static md:flex flex-col md:w-64 border-r border-slate-100 min-h-screen shadow-2xl md:shadow-sm`}>
-      <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-4">
-        <h2 className="text-xl font-extrabold text-[#00A859] tracking-wider">
-          {role === 'manager' ? 'MANAGER' : 'ADMIN'}
-        </h2>
+    <aside
+      data-app-sidebar
+      className={`print:hidden fixed inset-y-0 left-0 z-40 flex min-h-screen w-full max-w-[85vw] flex-col border-r border-slate-100 bg-white shadow-xl transition-transform md:static md:w-64 md:shrink-0 md:shadow-sm ${
+        collapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'
+      }`}
+    >
+      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5">
+        <Link
+          to="/dashboard"
+          onClick={() => onClose?.()}
+          className="flex min-w-0 items-center gap-3"
+          aria-label="Shaba Water dashboard"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1b2da6] text-white shadow-[0_4px_12px_rgba(27,45,166,0.2)]">
+            <Droplet size={21} />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-base font-extrabold tracking-tight text-[#1b2da6]">
+              Shaba Water
+            </span>
+            <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-700">
+              {role === 'manager' ? 'Manager portal' : 'Admin portal'}
+            </span>
+          </span>
+        </Link>
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
-            className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-            aria-label="Close sidebar"
+            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 md:hidden"
+            aria-label="Close navigation"
           >
             <X size={18} />
           </button>
         )}
       </div>
 
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navItems.map(item => {
+      <div className="px-5 pb-2 pt-6 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+        Administrative menu
+      </div>
+      <nav aria-label="Main navigation" className="flex-1 space-y-1 px-3 pb-5">
+        {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPath === item.path;
+          const isActive = location.pathname === item.path;
 
           return (
             <Link
               key={item.key}
               to={item.path}
-              onClick={() => onClose && onClose()}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
-                isActive 
-                  ? 'bg-[#00A859] text-white shadow-md' 
-                  : 'text-slate-600 hover:bg-[#e6f6ee] hover:text-[#00A859] group'
+              onClick={() => onClose?.()}
+              aria-current={isActive ? 'page' : undefined}
+              className={`group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition ${
+                isActive
+                  ? 'bg-[#1b2da6] text-white shadow-[0_4px_12px_rgba(27,45,166,0.16)]'
+                  : 'text-slate-600 hover:bg-indigo-50 hover:text-[#1b2da6]'
               }`}
             >
-              <Icon 
-                size={20} 
-                className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-[#00A859] transition-colors'} 
+              <Icon
+                size={18}
+                className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-[#1b2da6]'}
               />
-              <span className="text-sm truncate">{item.label}</span>
+              <span className="truncate">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="px-4 py-6 border-t border-slate-100 bg-slate-50/50">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
-            <img 
-              src={adminAvatar} 
-              alt="User" 
-              className="w-full h-full object-cover" 
-              onError={(e) => { 
-                e.target.onerror = null; 
-                e.target.src = 'https://ui-avatars.com/api/?name=Admin&background=00A859&color=fff'; 
-              }} 
-            />
-          </div>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-xs text-slate-500 font-medium">Welcome back</span>
-            <span className="text-sm font-bold text-slate-800 truncate">{adminName}</span>
-          </div>
-        </div>
-
-        <button 
-          onClick={handleSignOut} 
-          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-red-600 font-bold rounded-xl hover:bg-red-50 hover:text-red-700 transition-colors border border-transparent hover:border-red-100"
+      <div className="border-t border-slate-100 bg-[#f7f9fd] p-3">
+        <button
+          type="button"
+          onClick={() => navigate('/profile')}
+          className="flex w-full items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 text-left shadow-sm transition hover:border-indigo-100"
         >
-          <LogOut size={18} />
-          <span>Sign Out</span>
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-indigo-100 text-xs font-bold text-[#1b2da6]">
+            {initials}
+            {avatar && (
+              <img
+                src={avatar}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={(event) => {
+                  event.currentTarget.style.display = 'none';
+                }}
+              />
+            )}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-xs font-bold text-slate-800">{adminName}</span>
+            <span className="mt-0.5 block truncate text-[10px] text-slate-500">{adminEmail}</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-rose-50 hover:text-rose-700"
+        >
+          <LogOut size={15} />
+          <span>Sign out</span>
         </button>
       </div>
     </aside>
