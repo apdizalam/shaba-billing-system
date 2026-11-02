@@ -38,7 +38,7 @@ export default function Sidebar({ collapsed, onClose }) {
   }, [role]);
 
   const allNav = [
-    { key: 'dashboard', label: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { key: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { key: 'customers', label: 'Customers', path: '/customers', icon: Users },
     { key: 'meters', label: 'Meters', path: '/meters', icon: Gauge },
     { key: 'billing', label: 'Billing', path: '/billing', icon: CreditCard },
@@ -57,6 +57,8 @@ export default function Sidebar({ collapsed, onClose }) {
     localStorage.removeItem('userFullName');
     localStorage.removeItem('username');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user_name');
     localStorage.removeItem('user');
     navigate('/login', { replace: true });
   };

@@ -75,7 +75,7 @@ export default function ProfilePage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'center' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>My Profile</h2>
         <button 
-          onClick={() => navigate('/')} 
+          onClick={() => navigate('/dashboard')}
           style={{ color: '#059669', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}
         >
           ← Back to Dashboard

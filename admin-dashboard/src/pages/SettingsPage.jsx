@@ -9,7 +9,7 @@ export default function SettingsPage() {
     <div className="p-8 max-w-2xl mx-auto w-full">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-extrabold text-slate-800">Settings</h1>
-        <Button onClick={() => navigate('/')} variant="ghost">← Back to Dashboard</Button>
+        <Button onClick={() => navigate('/dashboard')} variant="ghost">← Back to Dashboard</Button>
       </div>
 
       <Card>

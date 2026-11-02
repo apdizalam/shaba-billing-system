@@ -42,7 +42,7 @@ function AppContent() {
         
         <main className="flex-1 overflow-y-auto w-full">
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/managers/register" element={<RegisterManagerPage />} />
             
             <Route path="/customers" element={<CustomersPage />} />

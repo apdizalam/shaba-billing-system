@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { API_BASE, setAuthToken } from '../services/api';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -51,40 +53,34 @@ export default function Login() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user_role", data.user?.role || "admin");
-        localStorage.setItem("user_name", data.user?.fullName || username);
-
-        saveRememberState();
-
-        const userRole = data.user?.role?.toLowerCase() || "";
-        if (userRole === 'manager' || username.trim().toLowerCase() === 'manager') {
-          window.location.href = '/manager-portal';
-        } else {
-          window.location.href = '/';
-        }
-      } else {
-        setErrorMessage("username or password is in correct");
-        setIsLoading(false);
+      if (!response.ok) {
+        setErrorMessage(data.message || "Invalid username or password.");
+        return;
       }
+
+      if (!data.token) {
+        setErrorMessage("Login response did not include an authentication token.");
+        return;
+      }
+
+      const user = {
+        ...data.user,
+        name: data.user?.fullName || username.trim(),
+      };
+      const userRole = data.user?.role || "admin";
+
+      setAuthToken(data.token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", userRole);
+      localStorage.setItem("user_role", userRole);
+      localStorage.setItem("user_name", user.name);
+      saveRememberState();
+      navigate('/dashboard', { replace: true });
     } catch (err) {
-      console.warn("MongoDB connection fallback active for local presentations...");
-      setTimeout(() => {
-        const lowerUser = username.trim().toLowerCase();
-        if (lowerUser === 'admin' && password === 'admin123') {
-          saveRememberState();
-          localStorage.setItem("user_role", "admin");
-          window.location.href = '/';
-        } else if (lowerUser === 'manager' && password === 'manager123') {
-          saveRememberState();
-          localStorage.setItem("user_role", "manager");
-          window.location.href = '/manager-portal'; 
-        } else {
-          setErrorMessage("username or password is in correct");
-          setIsLoading(false);
-        }
-      }, 600);
+      console.error("Login request failed:", err);
+      setErrorMessage("Unable to sign in. Please check your connection and try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
