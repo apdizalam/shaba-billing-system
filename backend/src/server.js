@@ -96,7 +96,17 @@ const Transaction = mongoose.models.Transaction || mongoose.model('Transaction',
 const formatUsername = (username) => {
   const raw = (username || '').trim();
   if (!raw) return raw;
-  return raw.startsWith('@') ? raw : `@${raw.toLowerCase()}`;
+  return `@${raw.replace(/^@/, '').toLowerCase()}`;
+};
+
+const matchesPassword = async (storedPassword, suppliedPassword) => {
+  if (typeof storedPassword !== 'string' || !storedPassword) return false;
+  const password = String(suppliedPassword);
+  if (/^\$2[aby]\$\d\d\$/.test(storedPassword)) {
+    const bcrypt = require('bcrypt');
+    return bcrypt.compare(password, storedPassword);
+  }
+  return storedPassword === password.trim();
 };
 
 const logTransaction = async (reference, type, amount = 0) => {
@@ -231,15 +241,28 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     // 2. Fallback to Manager Collection if not core admin
-    let user = await Manager.findOne({
-      $or: [{ username: cleanUsername }, { username: formatUsername(cleanUsername) }],
-    });
+    const usernameCandidates = [...new Set([
+      cleanUsername,
+      cleanUsername.toLowerCase(),
+      formatUsername(cleanUsername),
+    ])];
+
+    let user = await mongoose.connection
+      .collection('users')
+      .findOne({ username: { $in: usernameCandidates } });
+    const isAuthUser = Boolean(user);
+
+    if (!user) {
+      user = await Manager.findOne({
+        $or: [{ username: cleanUsername }, { username: formatUsername(cleanUsername) }],
+      });
+    }
     let userRole = user ? (user.role || 'manager') : null;
 
     // 3. Fallback to Customer Collection if not found in Manager
     if (!user) {
       user = await Customer.findOne({
-        $or: [{ username: cleanUsername }, { username: formatUsername(cleanUsername) }],
+        username: { $in: usernameCandidates },
       });
       if (user) {
         userRole = 'customer';
@@ -250,24 +273,20 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ message: "Login Failed: Invalid credentials" });
     }
 
-    // Anti-Gravity Universal Password Matcher — supports bcrypt hashes AND plain text
-    let isPasswordValid = false;
-    if (user.password && (user.password.startsWith('$2b$') || user.password.length === 60)) {
-      const bcrypt = require('bcrypt');
-      isPasswordValid = await bcrypt.compare(rawPassword, user.password);
-    } else {
-      isPasswordValid = (user.password === rawPassword);
-    }
-
+    const isPasswordValid = await matchesPassword(user.password, rawPassword);
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Login Failed: Invalid credentials" });
     }
 
-    let token = `shaba-${user._id}`;
-    if (userRole === 'admin') {
-      token = "admin-secure-token";
+    let token;
+    if (isAuthUser) {
+      token = `shaba-${user._id}`;
+    } else if (userRole === 'admin') {
+      token = 'admin-secure-token';
     } else if (userRole === 'manager') {
-      token = "manager-secure-token";
+      token = 'manager-secure-token';
+    } else {
+      token = `shaba-${user._id}`;
     }
 
     res.json({
@@ -328,6 +347,27 @@ app.get('/api/auth/me', async (req, res) => {
           avatar: customer.avatar || '',
           supplyNo: meter ? meter.supplyNo : '',
           supplyNumber: meter ? meter.supplyNo : ''
+        });
+      }
+
+      const authUser = mongoose.Types.ObjectId.isValid(customerId)
+        ? await mongoose.connection
+          .collection('users')
+          .findOne({ _id: new mongoose.Types.ObjectId(customerId) })
+        : null;
+      if (authUser) {
+        return res.json({
+          _id: authUser._id,
+          role: authUser.role,
+          fullName: authUser.fullName || '',
+          username: authUser.username,
+          email: authUser.email || '',
+          phone: authUser.phone || '',
+          address: authUser.address || '',
+          group: authUser.group || '',
+          avatar: authUser.avatar || '',
+          supplyNo: authUser.supplyNo || authUser.meterNumber || '',
+          supplyNumber: authUser.supplyNo || authUser.meterNumber || '',
         });
       }
     }

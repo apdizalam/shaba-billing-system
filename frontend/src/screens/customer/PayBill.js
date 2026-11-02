@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, Alert, Linking, Platform, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Alert, Linking, Platform, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import Input from '../../components/Input';
 import Button from '../../components/Button';

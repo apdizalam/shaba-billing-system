@@ -31,8 +31,14 @@ const LoginScreen = ({ navigation }) => {
                 throw new Error('Authentication context is not ready.');
             }
         } catch (error) {
-            console.warn('Login request failed:', error);
-            Alert.alert("Cilad", "username or password is in correct");
+            const apiMessage = error?.response?.data?.message;
+            const message = apiMessage || (
+                error?.response
+                    ? 'The login service could not complete your request. Please try again.'
+                    : 'Could not reach the login server. Check your connection and try again.'
+            );
+            console.warn('Login request failed:', error?.response?.status || error?.message);
+            Alert.alert('Cilad', message);
         } finally {
             setLoading(false);
         }

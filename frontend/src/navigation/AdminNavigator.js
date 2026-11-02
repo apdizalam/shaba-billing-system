@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashboardScreen from '../screens/admin/Dashboard';
 import CustomersScreen from '../screens/admin/Customers';
 import BillsScreen from '../screens/admin/Bills';
@@ -8,7 +8,7 @@ import CreateBillScreen from '../screens/admin/CreateBill';
 import CreateMeterScreen from '../screens/admin/CreateMeter';
 import CreateCustomerScreen from '../screens/admin/CreateCustomer';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const AdminNavigator = () => {
     return (

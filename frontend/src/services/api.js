@@ -1,10 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Replace with your machine's IP if testing on physical device
-// For Android Emulator: 10.0.2.2
-// For iOS Simulator: localhost
-const BASE_URL = 'http://192.168.1.120:5000/api';
+// Match the admin dashboard's account database; set EXPO_PUBLIC_API_BASE for local development.
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE || 'https://backend-q2g2.onrender.com/api';
 
 const api = axios.create({
     baseURL: BASE_URL,

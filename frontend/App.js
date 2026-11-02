@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, AuthContext } from './src/context/AuthContext';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
 import CustomerNavigator from './src/navigation/CustomerNavigator';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 function RootNavigator() {
   const { userToken, isLoading } = useContext(AuthContext);
