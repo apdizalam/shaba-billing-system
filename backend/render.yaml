@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: water-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    preDeployCommand: npm run create-admin
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
