@@ -82,10 +82,16 @@ const getCustomerBills = async (customerId, status) => {
             }, 500);
         });
     }
-    const url = status 
-        ? `/bills/customer/${customerId}?status=${status}` 
-        : `/bills/customer/${customerId}`;
-    const response = await api.get(url);
+    if (!customerId) {
+        throw new Error('Customer ID is required to fetch customer bills');
+    }
+
+    const response = await api.get('/bills', {
+        params: {
+            customerId,
+            ...(status ? { status } : {}),
+        },
+    });
     return response.data;
 };
 

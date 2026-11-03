@@ -59,14 +59,16 @@ export default function CustomerNavigator() {
           fontWeight: '500',
           marginTop: 2,
         },
-        tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopWidth: 1,
-          borderTopColor: '#e4e9ef',
-          height: 76,
-          paddingTop: 6,
-          paddingBottom: 6,
-        },
+        tabBarStyle: route.name === 'Pay Bill'
+          ? { display: 'none' }
+          : {
+              backgroundColor: '#ffffff',
+              borderTopWidth: 1,
+              borderTopColor: '#e4e9ef',
+              height: 76,
+              paddingTop: 6,
+              paddingBottom: 6,
+            },
       })}
     >
       <Tab.Screen 
