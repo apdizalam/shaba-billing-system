@@ -9,7 +9,7 @@ const { initiatePayment, verifyPayment } = require('../services/sifalo.service')
 const initiatePay = async (req, res) => {
     try {
         console.log('InitiatePay called with body:', JSON.stringify(req.body));
-        let { meterNumber, amount, phoneNumber, gateway } = req.body;
+        let { meterNumber, billId, amount, phoneNumber, gateway } = req.body;
 
         // Normalize meter number (trim + uppercase) to avoid case/whitespace mismatches
         if (typeof meterNumber === 'string') {
@@ -26,17 +26,28 @@ const initiatePay = async (req, res) => {
         }
 
         // Find the latest unpaid bill for this supplyNo or customer
-        const bill = await Bill.findOne({
-            $or: [ { supplyNo: reading.supplyNo }, { customerId: reading.customerId } ],
-            status: { $in: ['Pending', 'Overdue'] }
-        }).sort({ createdAt: -1 });
+        const unpaidStatuses = { $in: ['Pending', 'Overdue'] };
+        const bill = billId
+            ? await Bill.findOne({ _id: billId, supplyNo: reading.supplyNo, status: unpaidStatuses })
+            : await Bill.findOne({
+                $or: [ { supplyNo: reading.supplyNo }, { customerId: reading.customerId } ],
+                status: unpaidStatuses
+            }).sort({ createdAt: -1 });
 
         if (!bill) {
             return res.status(404).json({ message: 'No unpaid bills found for this meter' });
         }
 
-        if (bill.status === 'PAID') {
-            return res.status(400).json({ message: 'Bill is already paid' });
+        if (req.user?.role === 'customer' && String(req.user._id) !== String(bill.customerId)) {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
+        const numAmount = Number(amount);
+        if (!Number.isFinite(numAmount) || numAmount <= 0) {
+            return res.status(400).json({ message: 'Enter a valid payment amount' });
+        }
+        if (billId && numAmount !== Number(bill.amountDue)) {
+            return res.status(400).json({ message: 'Payment amount must match the selected bill amount' });
         }
 
         // Call SifaloPay
@@ -98,8 +109,7 @@ const initiatePay = async (req, res) => {
         // Determine currency based on amount magnitude
         // Amounts > 500 are likely local currency (SLSH/SOS) not USD
         let currency = 'USD';
-        const numAmount = parseFloat(amount);
-        if (!isNaN(numAmount) && numAmount >= 500) {
+        if (numAmount >= 500) {
             const digits = accountValue.replace(/^(\+?252)?/, '');
             if (/^(61|77)/.test(digits)) {
                 currency = 'SOS'; // Hormuud uses Somali Shilling
@@ -136,8 +146,8 @@ const initiatePay = async (req, res) => {
 
         const payment = await Payment.create({
             bill: bill._id,
-            customer: bill.customer,
-            amount,
+            customer: bill.customerId,
+            amount: numAmount,
             paymentMethod: 'SIFALOPAY',
             transactionId,
             status: paymentStatus
@@ -172,7 +182,7 @@ const handleWebhook = async (req, res) => {
                 // Update Bill status
                 const bill = await Bill.findById(payment.bill);
                 if (bill) {
-                    bill.status = 'PAID';
+                    bill.status = 'Paid';
                     await bill.save();
                 }
             }
