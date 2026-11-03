@@ -667,6 +667,16 @@ const listBills = async (req, res) => {
     if (req.query.customerId) {
       filter.customer = req.query.customerId;
     }
+    if (req.query.status) {
+      const requestedStatus = String(req.query.status).toLowerCase();
+      if (requestedStatus === 'unpaid' || requestedStatus === 'unsettled') {
+        filter.status = { $in: ['Pending', 'Overdue', 'UNPAID', 'OVERDUE'] };
+      } else if (requestedStatus === 'paid') {
+        filter.status = { $in: ['Paid', 'PAID'] };
+      } else {
+        filter.status = req.query.status;
+      }
+    }
     const bills = await Bill.find(filter).populate('customer').sort({ createdAt: -1 });
     res.status(200).json(bills.map(normalizeBill));
   } catch (err) {
