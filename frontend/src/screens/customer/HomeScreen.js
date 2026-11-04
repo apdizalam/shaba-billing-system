@@ -28,41 +28,29 @@ const COLORS = {
   background: '#F3F6F8',
 };
 
+const getAmount = (bill) => Number(bill?.amountDue ?? bill?.amount ?? 0);
+
 const formatAmount = (value) => {
   const amount = Number(value);
   return Number.isFinite(amount) ? amount.toFixed(2) : '0.00';
 };
 
-const formatBillPeriod = (period) => {
-  if (!period) return 'Water bill';
-
-  const match = String(period).match(/^(\d{4})-(\d{1,2})$/);
-  if (match) {
-    const month = new Date(Number(match[1]), Number(match[2]) - 1).toLocaleString(undefined, {
-      month: 'long',
-    });
-    return `${month} bill`;
-  }
-
-  return `${period} bill`;
-};
-
-const formatShortDate = (date) => {
-  if (!date) return '—';
-  const dateOnly = String(date).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const parsed = dateOnly
-    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
-    : new Date(date);
-  return Number.isNaN(parsed.getTime())
+const formatDate = (value) => {
+  if (!value) return '—';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
     ? '—'
-    : parsed.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    : date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' });
 };
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+const formatPeriod = (period) => {
+  if (!period) return 'Water bill';
+  const match = String(period).match(/^(\d{4})-(\d{1,2})$/);
+  if (!match) return `${period} bill`;
+  const month = new Date(Number(match[1]), Number(match[2]) - 1).toLocaleString(undefined, {
+    month: 'long',
+  });
+  return `${month} bill`;
 };
 
 const getInitials = (name) => {
@@ -71,11 +59,11 @@ const getInitials = (name) => {
   return parts.slice(0, 2).map((part) => part[0].toUpperCase()).join('');
 };
 
-const getBillAmount = (bill) => bill?.amountDue ?? bill?.amount ?? 0;
-const getBillDate = (bill) => bill?.updatedAt || bill?.createdAt || bill?.billDate;
-const getBillDueTimestamp = (bill) => {
-  const timestamp = bill?.dueDate ? new Date(bill.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-  return Number.isNaN(timestamp) ? Number.MAX_SAFE_INTEGER : timestamp;
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
 };
 
 const ShortcutCard = ({ styles, title, subtitle, icon, color, backgroundColor, onPress }) => (
@@ -100,6 +88,7 @@ export default function HomeScreen({ route, navigation }) {
   const customerId = userInfo?._id || userInfo?.user?._id;
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(false);
   const [userProfile, setUserProfile] = useState(userInfo);
   const isDarkMode = globalThemeState === 'dark';
@@ -120,35 +109,11 @@ export default function HomeScreen({ route, navigation }) {
         border: '#E4E9EF',
       };
 
-  const loadCachedProfile = useCallback(async () => {
-    try {
-      const cached = await AsyncStorage.getItem('userData');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        const profile = parsed.user || parsed;
-        setUserProfile((current) => ({ ...current, ...profile }));
-      }
-    } catch (err) {
-      console.warn('Failed to load cached customer profile:', err.message);
-    }
-
-    if (typeof window !== 'undefined' && window.localStorage) {
-      try {
-        const cached = JSON.parse(window.localStorage.getItem('user') || '{}');
-        setUserProfile((current) => ({ ...current, ...cached }));
-      } catch (err) {
-        console.warn('Failed to load cached customer profile:', err.message);
-      }
-    }
-  }, []);
-
   const fetchProfile = useCallback(async () => {
     try {
       const response = await api.get('/auth/me');
       const profile = response.data?.user || response.data;
-      if (profile) {
-        setUserProfile((current) => ({ ...current, ...profile }));
-      }
+      if (profile) setUserProfile((current) => ({ ...current, ...profile }));
     } catch (err) {
       console.warn('Failed to fetch customer profile on Home:', err.message);
     }
@@ -158,20 +123,23 @@ export default function HomeScreen({ route, navigation }) {
     if (!customerId) {
       setBills([]);
       setError(true);
-      console.warn('Cannot fetch customer bills on Home: missing customer ID.');
       setLoading(false);
+      setRefreshing(false);
       return;
     }
 
     try {
       setError(false);
       const customerBills = await billService.getCustomerBills(customerId);
-      setBills(Array.isArray(customerBills) ? customerBills : []);
+      if (!Array.isArray(customerBills)) throw new Error('Invalid bills response');
+      setBills(customerBills);
     } catch (err) {
       console.warn('Failed to fetch customer bills on Home:', err.message);
+      setBills([]);
       setError(true);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, [customerId]);
 
@@ -180,20 +148,11 @@ export default function HomeScreen({ route, navigation }) {
       setLoading(true);
       fetchProfile();
       fetchBills();
-      loadCachedProfile();
-    }, [fetchProfile, fetchBills, loadCachedProfile])
+    }, [fetchProfile, fetchBills])
   );
 
-  const displayName =
-    userProfile?.fullName ||
-    userProfile?.name ||
-    userInfo?.fullName ||
-    userInfo?.name ||
-    userInfo?.username ||
-    'Customer';
-  const avatar = userProfile?.avatar || userProfile?.profileImage || null;
   const sortedBills = useMemo(
-    () => [...bills].sort((a, b) => new Date(getBillDate(b) || 0) - new Date(getBillDate(a) || 0)),
+    () => [...bills].sort((a, b) => new Date(b.createdAt || b.billDate || 0) - new Date(a.createdAt || a.billDate || 0)),
     [bills]
   );
   const unpaidBills = useMemo(
@@ -204,14 +163,20 @@ export default function HomeScreen({ route, navigation }) {
     () => sortedBills.filter((bill) => String(bill.status).toLowerCase() === 'paid'),
     [sortedBills]
   );
-  const balanceDue = unpaidBills.reduce((sum, bill) => sum + (Number(getBillAmount(bill)) || 0), 0);
-  const nextUnpaidBill = useMemo(
-    () => [...unpaidBills].sort((a, b) => getBillDueTimestamp(a) - getBillDueTimestamp(b))[0],
-    [unpaidBills]
-  );
+  const balanceDue = unpaidBills.reduce((total, bill) => total + getAmount(bill), 0);
+  const nextUnpaidBill = unpaidBills[0];
   const latestPaidBill = paidBills[0];
+  const displayName =
+    userProfile?.fullName ||
+    userProfile?.name ||
+    userInfo?.fullName ||
+    userInfo?.name ||
+    userInfo?.username ||
+    'Customer';
+  const avatar = userProfile?.avatar || userProfile?.profileImage || null;
   const supplyNumber =
     nextUnpaidBill?.supplyNo ||
+    latestPaidBill?.supplyNo ||
     userProfile?.supplyNo ||
     userProfile?.supplyNumber ||
     userProfile?.meterNumber ||
@@ -219,25 +184,19 @@ export default function HomeScreen({ route, navigation }) {
     userInfo?.supplyNumber ||
     userInfo?.meterNumber ||
     '—';
-  const latestPaymentUnits =
-    latestPaidBill?.unitsUsed ?? latestPaidBill?.units ?? latestPaidBill?.consumption ?? 0;
 
   const openPayBill = () => {
-    if (!nextUnpaidBill) {
-      navigation.navigate('Pay Bill', { userInfo });
-      return;
-    }
-
+    if (!nextUnpaidBill) return;
     navigation.navigate('Pay Bill', {
       userInfo,
       billId: nextUnpaidBill._id,
       supplyNo: nextUnpaidBill.supplyNo || supplyNumber,
-      amountDue: getBillAmount(nextUnpaidBill),
+      amountDue: getAmount(nextUnpaidBill),
       period: nextUnpaidBill.period || nextUnpaidBill.month,
       customerName: displayName,
       previousReading: nextUnpaidBill.prevReading ?? nextUnpaidBill.previousReading,
       currentReading: nextUnpaidBill.currReading ?? nextUnpaidBill.currentReading,
-      units: nextUnpaidBill.unitsUsed ?? nextUnpaidBill.units,
+      units: nextUnpaidBill.unitsUsed ?? nextUnpaidBill.units ?? nextUnpaidBill.consumption,
       billDate: nextUnpaidBill.billDate || nextUnpaidBill.createdAt,
       dueDate: nextUnpaidBill.dueDate,
     });
@@ -247,11 +206,7 @@ export default function HomeScreen({ route, navigation }) {
     screen: { flex: 1, backgroundColor: palette.background },
     scrollContent: { paddingHorizontal: 20, paddingTop: 14, paddingBottom: 28 },
     content: { width: '100%', maxWidth: 560, alignSelf: 'center' },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 20,
-    },
+    header: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
     initials: {
       width: 52,
       height: 52,
@@ -299,12 +254,7 @@ export default function HomeScreen({ route, navigation }) {
       marginBottom: 10,
     },
     balanceTitle: { color: '#E8EBFF', fontSize: 16, fontWeight: '500' },
-    statusBadge: {
-      backgroundColor: COLORS.green,
-      borderRadius: 999,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-    },
+    statusBadge: { backgroundColor: COLORS.green, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
     statusText: { color: '#175A32', fontSize: 12, fontWeight: '700' },
     balanceAmount: { color: '#FFFFFF', fontSize: 42, lineHeight: 50, fontWeight: '800' },
     billMeta: {
@@ -339,13 +289,7 @@ export default function HomeScreen({ route, navigation }) {
       padding: 16,
       justifyContent: 'space-between',
     },
-    shortcutIcon: {
-      width: 42,
-      height: 42,
-      borderRadius: 14,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+    shortcutIcon: { width: 42, height: 42, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
     shortcutTitle: { color: palette.ink, fontSize: 16, fontWeight: '700', marginTop: 12 },
     shortcutSubtitle: { color: palette.muted, fontSize: 13, marginTop: 2 },
     sectionHeading: {
@@ -377,7 +321,7 @@ export default function HomeScreen({ route, navigation }) {
     paymentTitle: { color: palette.ink, fontSize: 15, fontWeight: '700' },
     paymentSubtitle: { color: palette.muted, fontSize: 12, marginTop: 3 },
     paymentAmount: { color: palette.ink, fontSize: 16, fontWeight: '700', marginLeft: 8 },
-    emptyPayment: { color: palette.muted, fontSize: 14 },
+    emptyPayment: { color: palette.muted, fontSize: 14, flex: 1 },
     billError: { color: '#FDE68A', fontSize: 12, marginTop: 6 },
   });
 
@@ -389,9 +333,9 @@ export default function HomeScreen({ route, navigation }) {
         contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl
-            refreshing={loading}
+            refreshing={refreshing}
             onRefresh={() => {
-              setLoading(true);
+              setRefreshing(true);
               fetchBills();
               fetchProfile();
             }}
@@ -434,20 +378,34 @@ export default function HomeScreen({ route, navigation }) {
             </View>
             {loading ? (
               <ActivityIndicator size="large" color="#FFFFFF" style={{ alignSelf: 'flex-start', height: 50 }} />
+            ) : error ? (
+              <Text style={styles.balanceAmount}>—</Text>
             ) : (
               <Text style={styles.balanceAmount}>${formatAmount(balanceDue)}</Text>
             )}
             <View style={styles.billMeta}>
               <Text style={styles.billMetaText} numberOfLines={1}>Supply No · {supplyNumber}</Text>
               <Text style={[styles.billMetaText, { marginLeft: 10 }]} numberOfLines={1}>
-                Next bill: {nextUnpaidBill?.dueDate ? formatShortDate(nextUnpaidBill.dueDate) : '—'}
+                Next bill: {nextUnpaidBill?.dueDate ? formatDate(nextUnpaidBill.dueDate) : '—'}
               </Text>
             </View>
-            {error && <Text style={styles.billError}>Could not load your bills. Pull down to retry.</Text>}
+            {error && (
+              <TouchableOpacity
+                onPress={() => {
+                  setLoading(true);
+                  fetchBills();
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.billError}>Could not load your bills. Tap to retry.</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
-              style={styles.payButton}
+              style={[styles.payButton, (!nextUnpaidBill || loading || error) && { opacity: 0.6 }]}
               onPress={openPayBill}
+              disabled={!nextUnpaidBill || loading || error}
               activeOpacity={0.8}
+              accessibilityState={{ disabled: !nextUnpaidBill || loading || error }}
               accessibilityRole="button"
             >
               <Ionicons name="card-outline" size={22} color={COLORS.blue} />
@@ -459,7 +417,7 @@ export default function HomeScreen({ route, navigation }) {
             <ShortcutCard
               styles={styles}
               title="My bills"
-              subtitle={`${unpaidBills.length} unpaid`}
+              subtitle={loading ? 'Loading' : error ? 'Unavailable' : `${unpaidBills.length} unpaid`}
               icon="receipt-outline"
               color={COLORS.blue}
               backgroundColor="#E5E9FF"
@@ -468,7 +426,7 @@ export default function HomeScreen({ route, navigation }) {
             <ShortcutCard
               styles={styles}
               title="Payment history"
-              subtitle={`${paidBills.length} ${paidBills.length === 1 ? 'payment' : 'payments'}`}
+              subtitle={loading ? 'Loading' : error ? 'Unavailable' : `${paidBills.length} ${paidBills.length === 1 ? 'payment' : 'payments'}`}
               icon="time-outline"
               color="#168044"
               backgroundColor="#DDF7E4"
@@ -512,17 +470,21 @@ export default function HomeScreen({ route, navigation }) {
             <View style={styles.paymentIcon}>
               <Ionicons name={latestPaidBill ? 'checkmark' : 'receipt-outline'} size={22} color="#168044" />
             </View>
-            {latestPaidBill ? (
+            {loading ? (
+              <ActivityIndicator color={COLORS.blue} />
+            ) : error ? (
+              <Text style={styles.emptyPayment}>Could not load payment history.</Text>
+            ) : latestPaidBill ? (
               <>
                 <View style={styles.paymentInfo}>
                   <Text style={styles.paymentTitle} numberOfLines={1}>
-                    {formatBillPeriod(latestPaidBill.period || latestPaidBill.month)}
+                    {formatPeriod(latestPaidBill.period || latestPaidBill.month)}
                   </Text>
                   <Text style={styles.paymentSubtitle} numberOfLines={1}>
-                    Paid {formatShortDate(getBillDate(latestPaidBill))} · {latestPaymentUnits} units
+                    Paid {formatDate(latestPaidBill.updatedAt || latestPaidBill.createdAt)} · {latestPaidBill.unitsUsed ?? latestPaidBill.units ?? latestPaidBill.consumption ?? 0} units
                   </Text>
                 </View>
-                <Text style={styles.paymentAmount}>${formatAmount(getBillAmount(latestPaidBill))}</Text>
+                <Text style={styles.paymentAmount}>${formatAmount(getAmount(latestPaidBill))}</Text>
               </>
             ) : (
               <Text style={styles.emptyPayment}>No payments yet</Text>
