@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
@@ -28,16 +29,43 @@ export default function CustomerNavigator() {
           else if (route.name === 'PaymentHistory') iconName = focused ? 'time' : 'time-outline';
           else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
           
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <View
+              style={{
+                width: 52,
+                height: 32,
+                borderRadius: 18,
+                backgroundColor: focused ? '#A3EDB2' : 'transparent',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name={iconName} size={size} color={color} />
+            </View>
+          );
         },
-        tabBarActiveTintColor: '#28a745',
-        tabBarInactiveTintColor: '#888888',
+        tabBarLabel:
+          route.name === 'Pay Bill'
+            ? 'Pay bill'
+            : route.name === 'ViewBills'
+              ? 'Bills'
+              : route.name === 'PaymentHistory'
+                ? 'History'
+                : route.name,
+        tabBarActiveTintColor: '#2436B2',
+        tabBarInactiveTintColor: '#626D79',
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+          marginTop: 2,
+        },
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
-          borderTopColor: '#e2e8f0',
-          height: 60,
-          paddingBottom: 8,
+          borderTopColor: '#e4e9ef',
+          height: 76,
+          paddingTop: 6,
+          paddingBottom: 6,
         },
       })}
     >
