@@ -366,7 +366,6 @@ const PayBillScreen = ({ navigation, route }) => {
                     <Text style={styles.title}>Pay bill</Text>
                     <Text style={styles.subtitle}>{walletSubtitle}</Text>
                 </View>
-              </View>
             </View>
 
             <KeyboardAvoidingView
