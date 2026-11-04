@@ -1,0 +1,1137 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Shaba Billing System</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: white page; brand blue, mint and steel carry the components. Hero with phone + dashboard mockups; then a phone walkthrough (customer), a working dashboard replica (admin), a bill-flow pipeline and features. Tokens: Shaba Water Brand Design System v1.0. */
+:root{
+  --bg:#FFFFFF; --surface:#F5F7F9; --card:#FFFFFF; --tint:#F2F4FD;
+  --ink:#0E1430; --body:#3E4751; --muted:#5B6570; --border:#E6EAEE; --field:#B9C1CA;
+  --heading:#1B2DA6; --link:#1B2DA6;
+  --btn-bg:#1B2DA6; --btn-fg:#FFFFFF; --btn-hover:#121F7A;
+  --btn2-bg:#FFFFFF; --btn2-fg:#1B2DA6;
+  --hero-bg:#FFFFFF; --hero-fg:#1B2DA6; --hero-sub:#0D1650; --chip-bg:#FFFFFF; --chip-fg:#0E1430;
+  --band:#1B2DA6; --band-fg:#FFFFFF; --band-sub:#E3E7FA; --band-accent:#A6EFB4;
+  --mint-soft:#DDF8E3; --mint-deep:#1B7A3B; --label:#1B7A3B;
+  --blue-soft:#E3E7FA; --blue-soft-fg:#121F7A;
+  --ok-bg:#DDF8E3; --ok-fg:#166232;
+  --warn-bg:#FEF3C7; --warn-fg:#92400E;
+  --bad-bg:#FDE4DA; --bad-fg:#9A3412; --bad-row:#FFF4EF; --bad:#C2410C;
+  --tap:#E8552B; --focus:#C3CBF3;
+  --screen:#F5F7F9; --device:#0E1430;
+  --shadow-1:0 2px 8px rgba(14,20,48,.08); --shadow-2:0 12px 32px rgba(27,45,166,.16); --shadow-3:0 30px 70px rgba(13,22,80,.28);
+  --f-display:"Archivo","Arial Black",Arial,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --r-md:10px; --r-lg:18px; --r-full:999px; --max:1200px;
+  --mint:#A6EFB4; --mint-50:#F1FCF3; color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance;color:var(--heading)}
+p{margin:0}
+a{color:var(--link)}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:720px){.wrap{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}}
+.label{font-size:12px;line-height:16px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--label)}
+.section{padding-block:clamp(64px,9vw,112px)}
+.sec-head{display:flex;flex-direction:column;gap:12px;max-width:680px}
+.sec-head h2{font-size:clamp(32px,4.4vw,52px);line-height:1.06;font-weight:800;letter-spacing:-.5px}
+.sec-head p{font-size:18px;line-height:28px;color:var(--body)}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:var(--r-full);border:none;font:600 16px/1 var(--f-body);text-decoration:none;cursor:pointer;transition:background .2s,transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s;white-space:nowrap}
+.btn-primary{background:var(--btn-bg);color:var(--btn-fg)}
+.btn-primary:hover{background:var(--btn-hover);transform:translateY(-2px);box-shadow:var(--shadow-2)}
+.btn-secondary{background:var(--btn2-bg);color:var(--btn2-fg)}
+.btn-secondary{box-shadow:inset 0 0 0 2px var(--heading)}
+.btn-secondary:hover{transform:translateY(-2px);background:var(--tint)}
+.btn-sm{height:44px;padding:0 20px;font-size:15px}
+.btn .arr{transition:transform .3s}
+.btn:hover .arr{transform:translateX(4px)}
+
+/* Header */
+.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
+.site-header.scrolled{border-bottom-color:var(--border);box-shadow:var(--shadow-1)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:72px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--heading)}
+.brand svg{width:40px;height:40px;transition:transform .5s cubic-bezier(.3,1.5,.5,1)}
+.brand:hover svg{transform:rotate(-12deg)}
+.brand b{font:800 22px/1 var(--f-display);letter-spacing:1px;display:block}
+.brand small{display:block;font:600 11px/1.2 var(--f-body);letter-spacing:1.5px;color:var(--label);margin-top:3px}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a:not(.btn){color:var(--ink);text-decoration:none;font-weight:500;font-size:15px;position:relative;padding-block:8px}
+.nav-links a:not(.btn)::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:2px;border-radius:2px;background:var(--heading);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.nav-links a:not(.btn):hover::after{transform:scaleX(1)}
+.menu-btn{display:none;width:44px;height:44px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--card);color:var(--ink);align-items:center;justify-content:center;cursor:pointer}
+@media (max-width:900px){
+  .menu-btn{display:inline-flex}
+  .nav-links{position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:4px;background:var(--bg);border-bottom:1px solid var(--border);box-shadow:var(--shadow-2);padding:12px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));transform:translateY(-8px);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+  .nav-links.open{opacity:1;transform:none;pointer-events:auto}
+  .nav-links a:not(.btn){padding:12px 4px;font-size:17px}
+}
+
+/* Hero */
+.hero{background:var(--bg);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-12%;top:-20%;width:62%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 40%,var(--mint) 0,var(--mint) 55%,transparent 56%);opacity:.55;pointer-events:none}
+.hero::after{content:"";position:absolute;right:30%;bottom:-140px;width:280px;height:280px;border-radius:50%;border:36px solid var(--tint);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center;padding-block:clamp(48px,7vw,96px)}
+.hero-copy{display:flex;flex-direction:column;gap:24px;position:relative;z-index:2;min-width:0}
+.hero .label{color:var(--hero-sub);display:inline-flex;align-items:center;gap:10px}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#1B7A3B;box-shadow:0 0 0 0 rgba(27,122,59,.5);animation:ping 2s infinite}
+.hero h1{font-size:clamp(40px,5.4vw,72px);line-height:.98;font-weight:800;letter-spacing:-1.5px;color:var(--hero-fg)}
+.hero h1 .line{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .line span{display:inline-block;animation:lineUp .9s cubic-bezier(.2,.8,.2,1) both}
+.hero h1 .line:nth-child(2) span{animation-delay:.1s}
+.hero h1 .line:nth-child(3) span{animation-delay:.2s}
+.hero-sub{font-size:19px;line-height:30px;color:var(--hero-sub);max-width:520px;animation:fadeUp .8s .3s cubic-bezier(.2,.8,.2,1) both}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;animation:fadeUp .8s .42s cubic-bezier(.2,.8,.2,1) both}
+.hero-stats{display:flex;flex-wrap:wrap;gap:28px;animation:fadeUp .8s .55s both;padding-top:8px}
+.hero-stats div{display:flex;flex-direction:column}
+.hero-stats b{font:800 30px/1 var(--f-display);color:var(--hero-fg)}
+.hero-stats span{font-size:13px;color:var(--hero-sub);margin-top:6px}
+.hero-stats .note{font-size:12px;color:var(--hero-sub);opacity:.8;align-self:flex-end}
+/* hero mockups */
+.hero-art{position:relative;min-width:0;height:520px}
+.mini-dash{position:absolute;right:0;top:20px;width:min(520px,86%);border-radius:16px;background:var(--card);box-shadow:var(--shadow-3);overflow:hidden;animation:slideIn 1s .2s cubic-bezier(.2,.8,.2,1) both}
+.chrome{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
+.chrome i{width:10px;height:10px;border-radius:50%;background:var(--field)}
+.chrome i:nth-child(1){background:#E8552B}.chrome i:nth-child(2){background:#F5B83D}.chrome i:nth-child(3){background:#5FD97A}
+.chrome span{margin-left:10px;font-size:12px;color:var(--muted);background:var(--card);padding:4px 12px;border-radius:8px;flex:1;max-width:260px}
+.md-body{display:grid;grid-template-columns:120px 1fr;min-height:330px}
+.md-side{background:var(--card);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:6px}
+.md-side b{font:800 13px var(--f-display);color:var(--heading);margin-bottom:8px;padding-left:6px}
+.md-side span{font-size:11px;padding:7px 8px;border-radius:8px;color:var(--body)}
+.md-side span.on{background:var(--btn-bg);color:var(--btn-fg);font-weight:600}
+.md-main{padding:16px;background:var(--surface);display:flex;flex-direction:column;gap:12px;min-width:0}
+.md-main h4{font-size:20px;font-weight:800}
+.md-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.md-kpi{background:var(--card);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.md-kpi small{font-size:9px;font-weight:600;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-kpi b{font:800 18px/1 var(--f-display);color:var(--ink)}
+.md-kpi b.red{color:var(--bad)} .md-kpi b.blue{color:var(--heading)}
+.md-chart{background:var(--card);border-radius:10px;padding:12px;display:flex;align-items:flex-end;gap:6px;height:110px}
+.md-chart i{flex:1;border-radius:4px 4px 0 0;background:var(--btn-bg);transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) both}
+.md-chart i:nth-child(even){background:#5FD97A}
+.md-rows{background:var(--card);border-radius:10px;padding:6px 12px}
+.md-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px}
+.md-row:last-child{border-bottom:none}
+.md-row .av{width:22px;height:22px;border-radius:50%;background:var(--blue-soft);color:var(--blue-soft-fg);font-weight:700;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.md-row span{flex:1;color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-row b{color:var(--heading);font-weight:600}
+.phone{--k:.72;position:relative;width:calc(390px * var(--k) + 20px);border-radius:40px;background:var(--device);padding:10px;box-shadow:var(--shadow-3);flex-shrink:0}
+.phone-screen{position:relative;width:calc(390px * var(--k));height:calc(844px * var(--k));border-radius:31px;background:#F5F7F9;overflow:hidden}
+.hero .phone{--k:.54;position:absolute;left:0;bottom:0;animation:phoneIn 1s .45s cubic-bezier(.2,.9,.3,1.1) both,float 6s 1.6s ease-in-out infinite}
+.toast{position:absolute;left:10px;right:10px;top:14px;z-index:4;background:var(--card);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow-2);display:flex;gap:10px;align-items:center;font-size:11px;animation:toastDrop 5s 1.6s cubic-bezier(.2,.8,.2,1) infinite}
+.toast .ic{width:28px;height:28px;border-radius:8px;background:var(--btn-bg);color:var(--btn-fg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast b{display:block;color:var(--ink);font-size:12px}
+.toast span{color:var(--muted)}
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-art{height:460px;max-width:600px;width:100%;margin:0 auto}
+}
+@media (max-width:560px){
+  .hero-art{height:430px}
+  .mini-dash{width:92%;top:0}
+  .md-body{grid-template-columns:1fr}.md-side{display:none}
+  .md-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero .phone{--k:.48;left:-4px}
+}
+
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:10px;font-size:11px;font-weight:600;white-space:nowrap}
+.p-ok{background:var(--ok-bg);color:var(--ok-fg)} .p-blue{background:var(--blue-soft);color:var(--blue-soft-fg)} .p-warn{background:var(--warn-bg);color:var(--warn-fg)} .p-bad{background:var(--bad-bg);color:var(--bad-fg)} .p-grey{background:var(--border);color:var(--body)}
+.spin{width:16px;height:16px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;flex-shrink:0}
+/* Phone screens: the app's real 390x844 screens, scaled */
+.scr{width:390px;height:844px;transform:scale(var(--k));transform-origin:0 0;position:absolute;left:0;top:0;overflow:hidden;border-radius:calc(31px / var(--k))}
+.scr > div{height:100%!important}
+.scr-scroll{transition:transform 1.6s cubic-bezier(.5,0,.3,1)}
+.screen-pane.on .scr-scroll.go{transform:translateY(-196px)}
+.typing-on{box-shadow:0 0 0 4px #C3CBF3;border-radius:12px}
+
+/* Marquee */
+.marquee{background:var(--band);color:var(--band-fg);overflow:hidden;padding-block:18px;border-radius:var(--r-full)}
+.marquee-wrap{padding-block:8px 0}
+.marquee-track{display:flex;width:max-content;animation:marquee 34s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-group{display:flex;align-items:center;gap:36px;padding-right:36px;font:700 19px/1 var(--f-display);white-space:nowrap}
+.marquee-group svg{color:var(--band-accent)}
+
+/* Customer walkthrough */
+.cust-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:64px;align-items:center;margin-top:48px}
+.steps-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.step-btn{width:100%;display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;text-align:left;padding:18px 20px;border-radius:var(--r-lg);border:1.5px solid var(--border);background:var(--card);color:var(--ink);cursor:pointer;position:relative;overflow:hidden;transition:border-color .3s,background .3s,transform .3s}
+.step-btn:hover{transform:translateX(4px)}
+.step-btn .n{width:48px;height:48px;border-radius:50%;background:var(--tint);color:var(--heading);display:flex;align-items:center;justify-content:center;font:800 20px var(--f-display);transition:background .3s,color .3s}
+.step-btn h3{font-size:20px;line-height:26px;color:var(--ink);font-weight:700}
+.step-btn p{font-size:15px;line-height:23px;color:var(--body);margin-top:4px}
+.step-btn .so{font-size:13px;color:var(--label);font-weight:600;margin-top:6px;display:block}
+.step-btn[aria-selected="true"]{border-color:var(--heading);background:var(--tint)}
+.step-btn[aria-selected="true"] .n{background:var(--btn-bg);color:var(--btn-fg)}
+.step-btn .bar{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--heading)}
+.step-btn[aria-selected="true"] .bar{animation:progress var(--dur,5s) linear forwards}
+.paused .step-btn .bar{animation-play-state:paused}
+.cust-stage{position:relative;display:flex;justify-content:center;padding:20px 40px}
+.cust-stage::before{content:"";position:absolute;inset:40px 0;border-radius:50%;background:var(--mint);opacity:.6}
+.cust-stage .phone{--k:.74}
+.screen-pane{position:absolute;inset:0;opacity:0;transform:translateX(30px);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.screen-pane.on{opacity:1;transform:none;pointer-events:auto}
+.screen-pane.on .bars i{animation:grow .8s cubic-bezier(.2,.8,.2,1) both}
+.float-tag{position:absolute;z-index:4;background:var(--card);color:var(--ink);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow-2);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap;animation:bob 5s ease-in-out infinite}
+.float-tag.t1{left:-10px;top:24%}.float-tag.t2{right:-20px;bottom:22%;animation-delay:-2.5s}
+.float-tag .d{width:10px;height:10px;border-radius:50%}
+@media (max-width:900px){.cust-grid{grid-template-columns:1fr;gap:40px}.cust-stage{order:-1;padding:10px 0}.float-tag{display:none}}
+@media (max-width:400px){.cust-stage .phone{--k:.66}}
+
+/* Admin console */
+.admin{background:var(--bg)}
+.admin .console{background:var(--card)}
+.console{margin-top:48px;border-radius:20px;background:var(--card);box-shadow:var(--shadow-3);overflow:hidden;border:1px solid var(--border)}
+.console-body{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:620px}
+.c-side{border-right:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;gap:4px;background:var(--card)}
+.c-brand{display:flex;align-items:center;gap:10px;padding:0 6px 18px}
+.c-brand svg{width:34px;height:34px}
+.c-brand b{font:800 16px/1 var(--f-display);color:var(--heading);display:block}
+.c-brand small{font-size:11px;color:var(--label);font-weight:600}
+.c-menu-lbl{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);padding:0 10px 8px}
+.c-tab{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;border:none;background:transparent;color:var(--body);font-size:14px;font-weight:500;cursor:pointer;text-align:left;width:100%;transition:background .2s,color .2s}
+.c-tab:hover{background:var(--tint);color:var(--ink)}
+.c-tab[aria-selected="true"]{background:var(--btn-bg);color:var(--btn-fg);font-weight:600}
+.c-tab svg{flex-shrink:0}
+.c-user{margin-top:auto;display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;background:var(--surface);font-size:12px}
+.c-user .av{width:32px;height:32px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px}
+.c-user b{display:block;font-size:13px;color:var(--ink)} .c-user span{color:var(--muted)}
+.c-main{background:var(--surface);min-width:0;display:flex;flex-direction:column}
+.c-top{display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--card);border-bottom:1px solid var(--border);font-size:13px;color:var(--body);flex-wrap:wrap}
+.c-top .st{display:flex;align-items:center;gap:8px;color:var(--ok-fg);font-weight:600;background:var(--ok-bg);padding:5px 10px;border-radius:12px}
+.c-top .spacer{flex:1}
+.c-top .bell{position:relative;color:var(--ink)}
+.c-top .bell::after{content:"";position:absolute;right:-1px;top:-1px;width:7px;height:7px;border-radius:50%;background:var(--tap);animation:ping 2s infinite}
+.panes{position:relative;padding:24px;flex:1;min-width:0}
+.pane{display:none;flex-direction:column;gap:18px;min-width:0}
+.pane.on{display:flex;animation:paneIn .5s cubic-bezier(.2,.8,.2,1) both}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.p-head small{font-size:11px;font-weight:600;letter-spacing:1.5px;color:var(--label);text-transform:uppercase}
+.p-head h3{font-size:clamp(24px,3vw,34px);font-weight:800;line-height:1.1}
+.p-head p{font-size:14px;color:var(--body);margin-top:4px}
+.p-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mini-btn{height:38px;padding:0 14px;border-radius:19px;border:1px solid var(--border);background:var(--card);color:var(--ink);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:default}
+.mini-btn.pri{background:var(--btn-bg);color:var(--btn-fg);border-color:transparent}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi{background:var(--card);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--k,var(--heading))}
+.kpi small{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.kpi b{font:800 30px/1 var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi .up{color:var(--ok-fg);font-weight:600}.kpi .dn{color:var(--bad);font-weight:600}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tbl-wrap{background:var(--card);border-radius:16px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+th{text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;padding:12px 16px;background:var(--tint)}
+td{padding:12px 16px;border-top:1px solid var(--border);color:var(--ink);vertical-align:middle}
+td small{display:block;color:var(--muted);font-size:11px}
+tr.bad td{background:var(--bad-row)}
+tr.bad td small{color:var(--bad)}
+.pane.on tbody tr{animation:rowIn .5s cubic-bezier(.2,.8,.2,1) both}
+.pane.on tbody tr:nth-child(2){animation-delay:.06s}.pane.on tbody tr:nth-child(3){animation-delay:.12s}.pane.on tbody tr:nth-child(4){animation-delay:.18s}.pane.on tbody tr:nth-child(5){animation-delay:.24s}
+.who{display:flex;align-items:center;gap:10px}
+.who .av{width:32px;height:32px;border-radius:50%;background:var(--blue-soft);color:var(--blue-soft-fg);font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+tr.bad .who .av{background:var(--bad-bg);color:var(--bad-fg)}
+.amt{font-weight:700;color:var(--heading);font-variant-numeric:tabular-nums}
+tr.bad .amt{color:var(--bad)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:1100px){.two{grid-template-columns:1fr}}
+.box{background:var(--card);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.box h4{font-size:16px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.meter{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.meter .top{display:flex;justify-content:space-between;gap:8px;color:var(--ink)}
+.meter .top span{color:var(--muted)}
+.track{height:8px;border-radius:4px;background:var(--surface);overflow:hidden}
+.track i{display:block;height:100%;border-radius:4px;background:var(--btn-bg);transform-origin:left}
+.pane.on .track i{animation:growX 1.2s cubic-bezier(.2,.8,.2,1) both}
+.track i.g{background:#1B7A3B}.track i.r{background:var(--bad)}
+.route{display:flex;align-items:center;gap:6px}
+.route .stp{width:26px;height:26px;border-radius:50%;border:2px solid var(--field);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);background:var(--card);flex-shrink:0}
+.route .stp.on{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg)}
+.route .ln{flex:1;height:4px;border-radius:2px;background:var(--surface);overflow:hidden}
+.route .ln i{display:block;height:100%;background:var(--btn-bg)}
+.form-mini{display:flex;flex-direction:column;gap:10px}
+.form-mini label{font-size:12px;font-weight:600;color:var(--ink)}
+.form-mini .inp{height:40px;border:1.5px solid var(--field);border-radius:10px;padding:0 12px;display:flex;align-items:center;font-size:13px;color:var(--muted);background:var(--card)}
+.form-mini .inp.typing{border:2px solid var(--heading);box-shadow:0 0 0 3px var(--focus);color:var(--ink)}
+.caret::after{content:"";display:inline-block;width:1.5px;height:15px;background:var(--heading);margin-left:2px;vertical-align:middle;animation:blink 1s steps(1) infinite}
+.sparks{display:flex;align-items:flex-end;gap:5px;height:70px}
+.sparks i{flex:1;border-radius:3px 3px 0 0;background:#1B7A3B;transform-origin:bottom}
+.pane.on .sparks i{animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+.sample{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.admin-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:28px}
+.admin-note{display:flex;gap:14px;align-items:flex-start}
+.admin-note .ic{width:44px;height:44px;border-radius:12px;background:var(--card);color:var(--heading);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow-1)}
+.admin-note b{display:block;font:700 17px var(--f-display);color:var(--ink);margin-bottom:4px}
+.admin-note p{font-size:15px;color:var(--body);line-height:23px}
+@media (max-width:900px){
+  .console-body{grid-template-columns:1fr}
+  .c-side{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:12px;gap:6px}
+  .c-brand,.c-menu-lbl,.c-user{display:none}
+  .c-tab{width:auto;white-space:nowrap;padding:10px 14px}
+  .panes{padding:16px}
+  .admin-notes{grid-template-columns:1fr}
+}
+
+/* Flow */
+.flow{background:var(--bg);padding-block:0}
+.flow-panel{background:var(--band);color:var(--band-fg);border-radius:32px;padding:clamp(40px,6vw,80px) clamp(20px,5vw,64px);position:relative;overflow:hidden}
+.flow-panel::after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;border-radius:50%;border:48px solid rgba(166,239,180,.12);pointer-events:none}
+.flow .sec-head h2{color:var(--band-fg)}.flow .sec-head p{color:var(--band-sub)}.flow .label{color:var(--band-accent)}
+.pipeline{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-top:56px}
+.pipe{position:absolute;left:10%;right:10%;top:34px;height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+.pipe::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,var(--band-accent) 0 18px,transparent 18px 34px);animation:flowX 1.2s linear infinite;opacity:.8}
+.drop{position:absolute;top:22px;left:10%;width:30px;height:30px;margin-left:-15px;color:var(--band-accent);animation:travel 6s cubic-bezier(.45,0,.55,1) infinite;z-index:2;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
+.node{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;position:relative;z-index:1}
+.node .ic{width:72px;height:72px;border-radius:50%;background:var(--card);color:var(--heading);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px var(--band);transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+.node:hover .ic{transform:scale(1.1) rotate(-6deg)}
+.node h3{font-size:18px;color:var(--band-fg);font-weight:700}
+.node p{font-size:14px;color:var(--band-sub);line-height:21px;max-width:200px}
+.node .who-tag{font-size:11px;font-weight:600;letter-spacing:1px;padding:3px 8px;border-radius:8px;background:rgba(166,239,180,.16);color:var(--band-accent);text-transform:uppercase}
+@media (max-width:900px){
+  .pipeline{grid-template-columns:1fr;gap:28px;padding-left:8px}
+  .pipe{left:43px;right:auto;top:20px;bottom:20px;width:6px;height:auto}
+  .pipe::after{background:repeating-linear-gradient(180deg,var(--band-accent) 0 18px,transparent 18px 34px);animation:flowY 1.2s linear infinite}
+  .drop{display:none}
+  .node{flex-direction:row;text-align:left;align-items:flex-start;gap:18px}
+  .node .ic{flex-shrink:0}
+  .node > div{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .node p{max-width:none}
+}
+
+/* Features */
+.features-sec{padding-top:clamp(64px,9vw,112px)}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:48px}
+@media (max-width:900px){.features{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.features{grid-template-columns:1fr}}
+.feature{display:flex;flex-direction:column;gap:12px;padding:24px;border-radius:var(--r-lg);background:var(--surface);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.feature:hover{transform:translateY(-4px);box-shadow:var(--shadow-2)}
+.feature .ic{width:52px;height:52px;border-radius:14px;background:var(--card);color:var(--heading);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-1);transition:transform .4s cubic-bezier(.3,1.6,.5,1),background .3s,color .3s}
+.feature:hover .ic{transform:rotate(-8deg) scale(1.08);background:var(--btn-bg);color:var(--btn-fg)}
+.feature h3{font-size:20px;line-height:28px;font-weight:700;color:var(--ink)}
+.feature p{color:var(--body);font-size:15px;line-height:23px}
+.feature .who-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+
+/* CTA + footer */
+.cta{padding-block:0 clamp(64px,9vw,112px)}
+.cta-box{position:relative;overflow:hidden;border-radius:28px;background:var(--mint);padding:clamp(32px,6vw,72px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center}
+.cta-box h2{font-size:clamp(32px,4.6vw,56px);line-height:1.02;font-weight:800;color:var(--hero-fg);letter-spacing:-.5px}
+.cta-box p{font-size:18px;color:var(--hero-sub);margin-top:12px;max-width:560px}
+.contact-lines{display:flex;flex-direction:column;gap:8px;margin-top:20px;font-weight:600;color:var(--hero-sub);user-select:all}
+.contact-lines span{display:flex;align-items:center;gap:10px}
+.cta-actions{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.cta-box .wave-deco{position:absolute;left:0;right:0;bottom:-2px;height:60px;opacity:.5;pointer-events:none}
+.cta-box .wave-deco path{fill:#FFFFFF;animation:waveX 8s linear infinite}
+@media (max-width:760px){.cta-box{grid-template-columns:1fr}.cta-actions{flex-direction:row;flex-wrap:wrap}}
+footer{background:var(--band);color:var(--band-sub);padding-block:56px 32px}
+.foot-grid{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));gap:32px}
+@media (max-width:860px){.foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.foot-grid{grid-template-columns:1fr}}
+.foot-grid h4{font:700 15px/1 var(--f-body);color:var(--band-fg);margin-bottom:14px}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.foot-grid a{color:var(--band-sub);text-decoration:none}
+.foot-grid a:hover{color:var(--band-fg);text-decoration:underline}
+.foot-brand{display:flex;flex-direction:column;gap:14px;max-width:320px}
+.foot-brand .brand{color:var(--band-fg)} .foot-brand .brand small{color:var(--band-accent)}
+.foot-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.16);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:14px}
+
+/* Scroll reveals: visible at rest; animated only where scroll timelines exist */
+@supports (animation-timeline: view()){
+  .reveal{animation:revealUp linear forwards;animation-timeline:view();animation-range:entry 0% entry 70%}
+  .reveal-scale{animation:revealScale linear forwards;animation-timeline:view();animation-range:entry 0% entry 60%}
+}
+
+@keyframes lineUp{from{transform:translateY(105%)}to{transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translate(40px,10px) rotate(2deg)}to{opacity:1;transform:none}}
+@keyframes phoneIn{from{opacity:0;transform:translateY(60px) rotate(-6deg)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -8px}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(27,122,59,.5)}80%,100%{box-shadow:0 0 0 10px rgba(27,122,59,0)}}
+@keyframes toastDrop{0%{transform:translateY(-120%);opacity:0}10%,70%{transform:none;opacity:1}80%,100%{transform:translateY(-120%);opacity:0}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@keyframes progress{to{width:100%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes paneIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rowIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+@keyframes blink{50%{opacity:0}}
+@keyframes flowX{to{transform:translateX(34px)}}
+@keyframes flowY{to{transform:translateY(34px)}}
+@keyframes travel{0%{left:10%;opacity:0}8%{opacity:1}92%{opacity:1}100%{left:90%;opacity:0}}
+@keyframes waveX{from{transform:translateX(0)}to{transform:translateX(-50px)}}
+@keyframes revealUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes revealScale{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .toast{animation:none!important}
+  .marquee-track [aria-hidden="true"],.drop{display:none}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="88" fill="#A6EFB4" stroke="currentColor" stroke-width="16"/>
+      <path d="M50 96 L66 160 H134 L150 96 Z" fill="#1B2DA6"/>
+      <path d="M100 40 H120 L132 88 H88 Z" fill="#FFFFFF"/>
+      <rect x="66" y="36" width="54" height="16" rx="6" fill="#5B6570"/>
+      <rect x="72" y="22" width="26" height="9" rx="4.5" fill="#E8552B"/>
+    </symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-dropf" viewBox="0 0 24 24"><path d="M12 2.5s6.5 7 6.5 11.8a6.5 6.5 0 0 1-13 0C5.5 9.5 12 2.5 12 2.5z" fill="currentColor"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></g></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/></g></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 18a9 9 0 1 1 16 0"/><path d="M12 14l4-5"/><circle cx="12" cy="14" r="1.5"/></g></symbol>
+    <symbol id="i-bill" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></g></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20h16"/><path d="M7 16v-4M11 16V8M15 16v-6M19 16V5"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-4.5"/></g></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18h2"/></g></symbol>
+    <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></g></symbol>
+    <symbol id="i-signal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="1.8"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"/></g></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v4h16v-4"/></g></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></g></symbol>
+    <symbol id="i-userplus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.2 1.4M18 14v6M15 17h6"/></g></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></g></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-dl" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4 15v4h16v-4"/></g></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></g></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></g></symbol>
+    <symbol id="i-call" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header" id="top">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Shaba Billing System home">
+      <svg aria-hidden="true" style="color:#1B2DA6"><use href="#mark"/></svg>
+      <span><b>SHABA</b><small>BILLING SYSTEM</small></span>
+    </a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="#customers">For customers</a>
+      <a href="#admins">For admins</a>
+      <a href="#flow">How billing works</a>
+      <a href="#features">Features</a>
+      <a class="btn btn-primary btn-sm" href="#contact">Contact Shaba</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="label"><span class="dot-live" aria-hidden="true"></span>Shaba Water Company · Ku soo dhowoow</span>
+        <h1 id="hero-title"><span class="line"><span>Water billing,</span></span><span class="line"><span>from the meter</span></span><span class="line"><span>to your phone.</span></span></h1>
+        <p class="hero-sub">Customers check their balance and pay with E-Dahab from the Shaba app. Shaba's team reads meters, issues bills and follows up on overdue accounts from one dashboard.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#customers">See the customer app <svg class="arr" width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-secondary" href="#admins">See the admin dashboard</a>
+        </div>
+        <div class="hero-stats">
+          <div><b class="tnum" data-count="1428">1,428</b><span>Customers</span></div>
+          <div><b class="tnum" data-count="1380">1,380</b><span>Meters</span></div>
+          <div><b class="tnum" data-count="24850" data-prefix="$">$24,850</b><span>Collected this cycle</span></div>
+          <span class="note">Sample data from the dashboard</span>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="mini-dash">
+          <div class="chrome"><i></i><i></i><i></i><span>admin · Shaba Billing</span></div>
+          <div class="md-body">
+            <div class="md-side">
+              <b>Shaba Water</b>
+              <span class="on">Dashboard</span><span>Customers</span><span>Meters</span><span>Billing</span><span>Reports</span>
+            </div>
+            <div class="md-main">
+              <h4>Admin Dashboard</h4>
+              <div class="md-kpis">
+                <div class="md-kpi"><small>Customers</small><b>1,428</b></div>
+                <div class="md-kpi"><small>Bills paid</small><b>894</b></div>
+                <div class="md-kpi"><small>Overdue</small><b class="red">34</b></div>
+                <div class="md-kpi"><small>Revenue</small><b class="blue">$24.8k</b></div>
+              </div>
+              <div class="md-chart">
+                <i style="height:40%;animation-delay:.6s"></i><i style="height:55%;animation-delay:.65s"></i><i style="height:48%;animation-delay:.7s"></i><i style="height:70%;animation-delay:.75s"></i><i style="height:62%;animation-delay:.8s"></i><i style="height:82%;animation-delay:.85s"></i><i style="height:74%;animation-delay:.9s"></i><i style="height:95%;animation-delay:.95s"></i>
+              </div>
+              <div class="md-rows">
+                <div class="md-row"><span class="av">AY</span><span>Amina Yusuf</span><b>$24.70</b><span class="pill p-ok" style="flex:none">Paid</span></div>
+                <div class="md-row"><span class="av">SH</span><span>Shabelle Hotel</span><b>$140.64</b><span class="pill p-ok" style="flex:none">Paid</span></div>
+                <div class="md-row"><span class="av">MN</span><span>Mahad Nuur</span><b>$42.50</b><span class="pill p-bad" style="flex:none">Overdue</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="toast"><span class="ic"><svg width="16" height="16"><use href="#i-bell"/></svg></span><div><b>Payment received</b><span>November bill · $49.50</span></div></div>
+            <div class="scr" inert><div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F7F9; font-family: Inter, Arial, sans-serif; color: #0E1430; display: flex; flex-direction: column; overflow: hidden">
+<div style="flex: 1; padding: 24px 20px 20px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #A6EFB4; color: #1B2DA6; text-decoration: none; font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center">AM</span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #5B6570">Good afternoon</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 19px">Apdizalam Mohameth</span></div>
+</div>
+<span style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E6EAEE; background: #FFFFFF; color: #3E4751; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg></span>
+</div>
+<div style="background: #1B2DA6; border-radius: 24px; padding: 22px; color: #FFFFFF; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden">
+<div style="position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 80px; border: 18px solid #2C40B8"></div>
+<div style="display: flex; justify-content: space-between; align-items: center; position: relative">
+<span style="font-size: 14px; color: #E3E7FA">Balance due</span>
+<span style="padding: 5px 10px; border-radius: 12px; background: #A6EFB4; color: #124F28; font-size: 12px; font-weight: 600">All paid</span>
+</div>
+<div style="font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 44px; line-height: 1; position: relative">$0.00</div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #E3E7FA; position: relative"><span>Supply No · SHB-MTR-0001</span><span>Next bill: [DATE]</span></div>
+<span style="height: 48px; border-radius: 24px; background: #FFFFFF; color: #1B2DA6; text-decoration: none; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg>Pay bill now</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #E3E7FA; color: #1B2DA6; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">My bills</span><span style="font-size: 13px; color: #5B6570">0 unpaid</span></span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #DDF8E3; color: #1B7A3B; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Payment history</span><span style="font-size: 13px; color: #5B6570">1 payment</span></span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #E6EAEE; color: #3E4751; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">My profile</span><span style="font-size: 13px; color: #5B6570">Account details</span></span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #FDE4DA; color: #C2410C; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Get help</span><span style="font-size: 13px; color: #5B6570">Report a problem</span></span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 17px">Last payment</span><span style="font-size: 14px; font-weight: 600; text-decoration: none">See all</span></div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px">
+<span style="width: 40px; height: 40px; border-radius: 20px; background: #DDF8E3; color: #1B7A3B; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">November bill</span><span style="font-size: 13px; color: #5B6570">Paid 11/2/2026 · 33 units</span></span>
+<span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 17px">$49.50</span>
+</div>
+</div>
+</div>
+<nav style="height: 76px; background: #FFFFFF; border-top: 1px solid #E6EAEE; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 0 4px 8px">
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1B2DA6; font-size: 12px; font-weight: 600"><span style="width: 52px; height: 30px; border-radius: 15px; background: #A6EFB4; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span>Home</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>Pay bill</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span>Bills</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>History</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span>Profile</span>
+</nav>
+</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap marquee-wrap"><div class="marquee" aria-label="What the system covers">
+    <div class="marquee-track">
+      <div class="marquee-group">
+        <span>Smart meter readings</span><svg width="18" height="18" aria-hidden="true"><use href="#i-dropf"/></svg>
+        <span>E-Dahab &amp; mobile money</span><svg width="18" height="18" aria-hidden="true"><use href="#i-dropf"/></svg>
+        <span>SMS bill alerts</span><svg width="18" height="18" aria-hidden="true"><use href="#i-dropf"/></svg>
+        <span>Overdue reminders</span><svg width="18" height="18" aria-hidden="true"><use href="#i-dropf"/></svg>
+        <span>Reports &amp; CSV export</span><svg width="18" height="18" aria-hidden="true"><use href="#i-dropf"/></svg>
+        <span>Somali &amp; English</span><svg width="18" height="18" aria-hidden="true"><use href="#i-dropf"/></svg>
+      </div>
+      <div class="marquee-group" aria-hidden="true">
+        <span>Smart meter readings</span><svg width="18" height="18"><use href="#i-dropf"/></svg>
+        <span>E-Dahab &amp; mobile money</span><svg width="18" height="18"><use href="#i-dropf"/></svg>
+        <span>SMS bill alerts</span><svg width="18" height="18"><use href="#i-dropf"/></svg>
+        <span>Overdue reminders</span><svg width="18" height="18"><use href="#i-dropf"/></svg>
+        <span>Reports &amp; CSV export</span><svg width="18" height="18"><use href="#i-dropf"/></svg>
+        <span>Somali &amp; English</span><svg width="18" height="18"><use href="#i-dropf"/></svg>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- CUSTOMERS -->
+  <section class="section" id="customers" aria-labelledby="cust-title">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label">For customers · Macaamiisha</span>
+        <h2 id="cust-title">The Shaba app, in a customer's hand</h2>
+        <p>No queue at the office. Customers see what they owe, pay with E-Dahab, and keep every receipt on their phone. These are the app's real screens.</p>
+      </div>
+      <div class="cust-grid" id="custDemo">
+        <ul class="steps-list" role="tablist" aria-label="Customer app screens">
+          <li><button class="step-btn" role="tab" id="st0" aria-selected="true" aria-controls="sc0" data-i="0"><span class="n">1</span><span><h3>See the balance</h3><p>Home shows the balance due, the supply number and the next bill date, with one button to pay.</p><span class="so">Bogga hore</span></span><span class="bar"></span></button></li>
+          <li><button class="step-btn" role="tab" id="st1" aria-selected="false" aria-controls="sc1" data-i="1"><span class="n">2</span><span><h3>Pay with E-Dahab</h3><p>Enter the supply number and amount, pick E-Dahab, then confirm the prompt that arrives on the phone.</p><span class="so">Bixi biilka</span></span><span class="bar"></span></button></li>
+          <li><button class="step-btn" role="tab" id="st2" aria-selected="false" aria-controls="sc2" data-i="2"><span class="n">3</span><span><h3>Check unpaid bills</h3><p>One screen lists anything still owed. When everything is paid, it says so.</p><span class="so">Ma jiraan biilal aan la bixin</span></span><span class="bar"></span></button></li>
+          <li><button class="step-btn" role="tab" id="st3" aria-selected="false" aria-controls="sc3" data-i="3"><span class="n">4</span><span><h3>Keep the receipt</h3><p>Payment history shows each bill with its meter reading, units used and a receipt to download.</p><span class="so">Taariikhda lacag-bixinta</span></span><span class="bar"></span></button></li>
+        </ul>
+
+        <div class="cust-stage reveal-scale">
+          <div class="float-tag t1"><span class="d" style="background:#1B7A3B"></span>Paid with E-Dahab</div>
+          <div class="float-tag t2"><svg width="16" height="16" aria-hidden="true" style="color:var(--heading)"><use href="#i-dl"/></svg>Receipts on the phone</div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="screen-pane on" id="sc0" role="tabpanel" aria-labelledby="st0" aria-label="Home screen"><div class="scr" inert><div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F7F9; font-family: Inter, Arial, sans-serif; color: #0E1430; display: flex; flex-direction: column; overflow: hidden">
+<div style="flex: 1; padding: 24px 20px 20px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #A6EFB4; color: #1B2DA6; text-decoration: none; font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center">AM</span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #5B6570">Good afternoon</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 19px">Apdizalam Mohameth</span></div>
+</div>
+<span style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E6EAEE; background: #FFFFFF; color: #3E4751; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg></span>
+</div>
+<div style="background: #1B2DA6; border-radius: 24px; padding: 22px; color: #FFFFFF; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden">
+<div style="position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 80px; border: 18px solid #2C40B8"></div>
+<div style="display: flex; justify-content: space-between; align-items: center; position: relative">
+<span style="font-size: 14px; color: #E3E7FA">Balance due</span>
+<span style="padding: 5px 10px; border-radius: 12px; background: #A6EFB4; color: #124F28; font-size: 12px; font-weight: 600">All paid</span>
+</div>
+<div style="font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 44px; line-height: 1; position: relative">$0.00</div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #E3E7FA; position: relative"><span>Supply No · SHB-MTR-0001</span><span>Next bill: [DATE]</span></div>
+<span style="height: 48px; border-radius: 24px; background: #FFFFFF; color: #1B2DA6; text-decoration: none; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg>Pay bill now</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #E3E7FA; color: #1B2DA6; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">My bills</span><span style="font-size: 13px; color: #5B6570">0 unpaid</span></span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #DDF8E3; color: #1B7A3B; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Payment history</span><span style="font-size: 13px; color: #5B6570">1 payment</span></span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #E6EAEE; color: #3E4751; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">My profile</span><span style="font-size: 13px; color: #5B6570">Account details</span></span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 16px; text-decoration: none; color: #0E1430; display: flex; flex-direction: column; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 12px; background: #FDE4DA; color: #C2410C; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Get help</span><span style="font-size: 13px; color: #5B6570">Report a problem</span></span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 17px">Last payment</span><span style="font-size: 14px; font-weight: 600; text-decoration: none">See all</span></div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px">
+<span style="width: 40px; height: 40px; border-radius: 20px; background: #DDF8E3; color: #1B7A3B; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">November bill</span><span style="font-size: 13px; color: #5B6570">Paid 11/2/2026 · 33 units</span></span>
+<span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 17px">$49.50</span>
+</div>
+</div>
+</div>
+<nav style="height: 76px; background: #FFFFFF; border-top: 1px solid #E6EAEE; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 0 4px 8px">
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1B2DA6; font-size: 12px; font-weight: 600"><span style="width: 52px; height: 30px; border-radius: 15px; background: #A6EFB4; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span>Home</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>Pay bill</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span>Bills</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>History</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span>Profile</span>
+</nav>
+</div></div></div>
+              <div class="screen-pane" id="sc1" role="tabpanel" aria-labelledby="st1" aria-label="Pay bill screen"><div class="scr" inert><div class="scr-scroll"><div style="width: 390px; height: 1040px; box-sizing: border-box; background: #F5F7F9; font-family: Inter, Arial, sans-serif; color: #0E1430; display: flex; flex-direction: column; overflow: hidden">
+<div style="height: 64px; background: #FFFFFF; border-bottom: 1px solid #E6EAEE; display: flex; align-items: center; gap: 8px; padding: 0 10px">
+<span style="width: 44px; height: 44px; border-radius: 22px; color: #0E1430; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></span>
+<div style="display: flex; flex-direction: column"><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px">Pay bill</span><span style="font-size: 12px; color: #5B6570">via Somtel · E-Dahab</span></div>
+</div>
+<div style="flex: 1; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="background: #FFF4EF; border: 1px solid #FAC6B2; border-radius: 16px; padding: 14px 16px; display: flex; gap: 12px">
+<span style="width: 28px; height: 28px; border-radius: 14px; background: #C2410C; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0">!</span>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #7C2D12">Bill generated: N/A</span><span style="font-size: 14px; line-height: 1.45; color: #9A3412">Haddii aan lagu bixin ka hor [DueDate], adeegga biyaha waa laga goyn doonaa.</span></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; color: #5B6570">Customer</span><span style="font-weight: 600; font-size: 15px">hooyo</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="background: #F5F7F9; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #5B6570">Previous</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px">—</span></div>
+<div style="background: #F5F7F9; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #5B6570">Current</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px">—</span></div>
+<div style="background: #E3E7FA; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #121F7A">Used units</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px; color: #1B2DA6">—</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 600">Supply number</span>
+<input data-type="SHB-MTR-0001" tabindex="-1" type="text" placeholder="e.g. SHB-MTR-0001" style="height: 52px; padding: 0 16px; border: 1.5px solid #B9C1CA; border-radius: 12px; font-family: Inter, Arial, sans-serif; font-size: 16px; color: #0E1430; background: #FFFFFF; box-sizing: border-box">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 600">Amount (USD)</span>
+<div style="display: flex; height: 52px; border: 1.5px solid #B9C1CA; border-radius: 12px; background: #FFFFFF; overflow: hidden"><span style="width: 44px; display: flex; align-items: center; justify-content: center; background: #F5F7F9; border-right: 1px solid #E6EAEE; font-weight: 600; color: #3E4751">$</span><input data-type="49.50" tabindex="-1" type="text" inputmode="decimal" placeholder="0.00" style="flex: 1; border: none; padding: 0 14px; font-family: Inter, Arial, sans-serif; font-size: 16px; color: #0E1430; background: transparent; min-width: 0"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600">Pay with</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<span style="height: 64px; border-radius: 14px; padding: 0 14px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; font-family: Inter, Arial, sans-serif; color: #0E1430; text-align: left; border: 2px solid #1B2DA6; background: #F2F4FD;"><span style="font-weight: 600; font-size: 15px">E-Dahab</span><span style="font-size: 12px; color: #5B6570">Somtel</span></span>
+<span style="height: 64px; border-radius: 14px; padding: 0 14px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; font-family: Inter, Arial, sans-serif; color: #0E1430; text-align: left; border: 1.5px solid #B9C1CA; background: #FFFFFF;"><span style="font-weight: 600; font-size: 15px">[OTHER WALLET]</span><span style="font-size: 12px; color: #5B6570">Mobile money</span></span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 600">Somtel phone number</span>
+<div style="display: flex; height: 52px; border: 1.5px solid #B9C1CA; border-radius: 12px; background: #FFFFFF; overflow: hidden"><span style="width: 64px; display: flex; align-items: center; justify-content: center; background: #F5F7F9; border-right: 1px solid #E6EAEE; font-weight: 600; color: #3E4751">+252</span><input tabindex="-1" type="tel" placeholder="Phone number" style="flex: 1; border: none; padding: 0 14px; font-family: Inter, Arial, sans-serif; font-size: 16px; color: #0E1430; background: transparent; min-width: 0"></div>
+<span style="font-size: 13px; color: #5B6570">You'll get a prompt on this phone to confirm the payment.</span>
+</div>
+</div>
+<div style="background: #FFFFFF; border-top: 1px solid #E6EAEE; padding: 14px 20px 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #5B6570">Total to pay</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 18px">$0.00</span></div>
+<span style="height: 52px; border-radius: 26px; background: #1B2DA6; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Pay now</span>
+</div>
+</div></div></div></div>
+              <div class="screen-pane" id="sc2" role="tabpanel" aria-labelledby="st2" aria-label="Unpaid bills screen"><div class="scr" inert><div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F7F9; font-family: Inter, Arial, sans-serif; color: #0E1430; display: flex; flex-direction: column; overflow: hidden">
+<div style="height: 64px; background: #FFFFFF; border-bottom: 1px solid #E6EAEE; display: flex; align-items: center; gap: 8px; padding: 0 10px">
+<span style="width: 44px; height: 44px; border-radius: 22px; color: #0E1430; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></span>
+<span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px">My unpaid bills</span>
+</div>
+<div style="padding: 18px 20px 0">
+<div style="background: #1B2DA6; border-radius: 20px; padding: 18px 20px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; color: #C3CBF3">TOTAL BALANCE DUE</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 36px; line-height: 1">$0.00</span></div>
+<span style="padding: 6px 12px; border-radius: 14px; background: #A6EFB4; color: #124F28; font-size: 13px; font-weight: 600">Up to date</span>
+</div>
+</div>
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 0 36px; text-align: center">
+<div style="width: 112px; height: 112px; border-radius: 56px; background: #DDF8E3; display: flex; align-items: center; justify-content: center">
+<div style="width: 72px; height: 72px; border-radius: 36px; background: #1B7A3B; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 22px">Ma jiraan biilal aan la bixin</span>
+<span style="font-size: 15px; line-height: 1.5; color: #5B6570">Dhamaan biilashaada waa la wada bixiyay!</span>
+</div>
+<span style="height: 48px; padding: 0 22px; border-radius: 24px; border: 2px solid #1B2DA6; color: #1B2DA6; text-decoration: none; font-weight: 600; font-size: 15px; display: flex; align-items: center; box-sizing: border-box">View payment history</span>
+</div>
+<nav style="height: 76px; background: #FFFFFF; border-top: 1px solid #E6EAEE; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 0 4px 8px">
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span>Home</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>Pay bill</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1B2DA6; font-size: 12px; font-weight: 600"><span style="width: 52px; height: 30px; border-radius: 15px; background: #A6EFB4; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span>Bills</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>History</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span>Profile</span>
+</nav>
+</div></div></div>
+              <div class="screen-pane" id="sc3" role="tabpanel" aria-labelledby="st3" aria-label="Payment history screen"><div class="scr" inert><div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F7F9; font-family: Inter, Arial, sans-serif; color: #0E1430; display: flex; flex-direction: column; overflow: hidden">
+<div style="height: 64px; background: #FFFFFF; border-bottom: 1px solid #E6EAEE; display: flex; align-items: center; gap: 8px; padding: 0 10px">
+<span style="width: 44px; height: 44px; border-radius: 22px; color: #0E1430; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></span>
+<span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px">Payment history</span>
+</div>
+<div style="flex: 1; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="background: #A6EFB4; border-radius: 20px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; color: #124F28">TOTAL PAID</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 36px; line-height: 1; color: #1B2DA6">$49.50</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 13px; color: #124F28"><span style="font-weight: 600">1 payment</span><span>2026</span></div>
+</div>
+<div style="display: flex; gap: 8px">
+<span style="height: 36px; padding: 0 16px; border-radius: 18px; border: none; background: #1B2DA6; color: #FFFFFF; font-family: Inter, Arial, sans-serif; font-size: 14px; font-weight: 600">All</span>
+<span style="height: 36px; padding: 0 16px; border-radius: 18px; border: 1.5px solid #B9C1CA; background: #FFFFFF; color: #3E4751; font-family: Inter, Arial, sans-serif; font-size: 14px; font-weight: 600">2026</span>
+<span style="height: 36px; padding: 0 16px; border-radius: 18px; border: 1.5px solid #B9C1CA; background: #FFFFFF; color: #3E4751; font-family: Inter, Arial, sans-serif; font-size: 14px; font-weight: 600">2025</span>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 2px 8px rgba(14,20,48,0.06)">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 18px">November 2026</span><span style="font-size: 13px; color: #5B6570">SHB-MTR-0001</span></div>
+<span style="padding: 5px 10px; border-radius: 12px; background: #DDF8E3; color: #166232; font-size: 12px; font-weight: 600">Guulaystay · Paid</span>
+</div>
+<div style="background: #F5F7F9; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 13px; color: #5B6570">Meter reading</span><span style="font-family: Archivo, Arial, sans-serif; font-weight: 700; font-size: 16px">1134 → 1167</span></div>
+<div style="height: 8px; border-radius: 4px; background: #E3E7FA; overflow: hidden"><div style="width: 62%; height: 8px; border-radius: 4px; background: #1B2DA6"></div></div>
+<div style="font-size: 13px; color: #1B2DA6; font-weight: 600">33 units used</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+<div style="display: flex; justify-content: space-between"><span style="color: #5B6570">Previous reading date</span><span>10/2/2026</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #5B6570">Current reading date</span><span>11/2/2026</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #5B6570">Paid on</span><span>11/2/2026</span></div>
+</div>
+<div style="border-top: 1px dashed #D0D6DC; padding-top: 14px; display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; color: #5B6570">AMOUNT PAID</span>
+<span style="font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 24px; color: #1B7A3B">$49.50</span>
+</div>
+<span style="height: 44px; border-radius: 22px; background: #F2F4FD; color: #1B2DA6; text-decoration: none; font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download receipt</span>
+</div>
+</div>
+<nav style="height: 76px; background: #FFFFFF; border-top: 1px solid #E6EAEE; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 0 4px 8px">
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span>Home</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>Pay bill</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span>Bills</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1B2DA6; font-size: 12px; font-weight: 600"><span style="width: 52px; height: 30px; border-radius: 15px; background: #A6EFB4; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>History</span>
+<span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6570; font-size: 12px; font-weight: 500"><span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span>Profile</span>
+</nav>
+</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMINS --><!-- ADMINS -->
+  <section class="section admin" id="admins" aria-labelledby="admin-title">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label">For admins · Maamulka</span>
+        <h2 id="admin-title">One dashboard to run billing</h2>
+        <p>Click through the menu to see how Shaba's team manages customers, meters, bills and staff. This is the real dashboard layout, filled with sample data.</p>
+      </div>
+
+      <div class="console reveal-scale" id="console">
+        <div class="chrome"><i></i><i></i><i></i><span>admin.shabawatercompany.com</span></div>
+        <div class="console-body">
+          <div class="c-side" role="tablist" aria-label="Admin menu">
+            <div class="c-brand"><svg aria-hidden="true" style="color:#1B2DA6"><use href="#mark"/></svg><span><b>Shaba Water</b><small>Ku soo dhowoow</small></span></div>
+            <div class="c-menu-lbl">ADMINISTRATIVE MENU</div>
+            <button class="c-tab" role="tab" aria-selected="true" aria-controls="p-dash" id="t-dash"><svg width="18" height="18" aria-hidden="true"><use href="#i-grid"/></svg>Dashboard</button>
+            <button class="c-tab" role="tab" aria-selected="false" aria-controls="p-cust" id="t-cust"><svg width="18" height="18" aria-hidden="true"><use href="#i-users"/></svg>Customers</button>
+            <button class="c-tab" role="tab" aria-selected="false" aria-controls="p-meter" id="t-meter"><svg width="18" height="18" aria-hidden="true"><use href="#i-gauge"/></svg>Meters</button>
+            <button class="c-tab" role="tab" aria-selected="false" aria-controls="p-bill" id="t-bill"><svg width="18" height="18" aria-hidden="true"><use href="#i-bill"/></svg>Billing</button>
+            <button class="c-tab" role="tab" aria-selected="false" aria-controls="p-mgr" id="t-mgr"><svg width="18" height="18" aria-hidden="true"><use href="#i-userplus"/></svg>Manager Registration</button>
+            <div class="c-user"><span class="av">AU</span><span><b>Admin User</b><span>admin@shaba.com</span></span></div>
+          </div>
+
+          <div class="c-main">
+            <div class="c-top">
+              <span class="st"><span class="dot-live"></span>Grid status: normal pressure</span>
+              <span>Live dispatch monitoring</span>
+              <span class="spacer"></span>
+              <span class="bell" aria-hidden="true"><svg width="20" height="20"><use href="#i-bell"/></svg></span>
+            </div>
+            <div class="panes">
+              <!-- Dashboard -->
+              <div class="pane on" id="p-dash" role="tabpanel" aria-labelledby="t-dash">
+                <div class="p-head">
+                  <div><small>Biyaha gobolka nabad qab · Live operations</small><h3>Admin Dashboard</h3><p>The day at a glance: customers, payments, overdue bills and revenue.</p></div>
+                  <div class="p-actions"><span class="mini-btn pri">+ Quick dispatch</span></div>
+                </div>
+                <div class="kpis">
+                  <div class="kpi" style="--k:#1B7A3B"><small>Customers · Macaamiisha</small><b data-count="1428">1,428</b><span><span class="up">+12.4%</span> this month</span></div>
+                  <div class="kpi"><small>Bills paid · La bixiyay</small><b data-count="894">894</b><span><span class="up">92%</span> on time</span></div>
+                  <div class="kpi" style="--k:#C2410C"><small>Overdue · Dib u dhacay</small><b style="color:var(--bad)" data-count="34">34</b><span><span class="dn">2.4%</span> delinquent</span></div>
+                  <div class="kpi" style="--k:#4256C9"><small>Revenue · Dakhliga</small><b style="color:var(--heading)" data-count="24850" data-prefix="$">$24,850</b><span><span class="up">+18.4%</span> · target $28k</span></div>
+                </div>
+                <div class="two">
+                  <div class="tbl-wrap">
+                    <table>
+                      <thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead>
+                      <tbody>
+                        <tr><td><div class="who"><span class="av">AY</span><span>Amina Yusuf<small>SHB-4091 · Hodan</small></span></div></td><td>20L bulk refill</td><td class="amt">$45.00</td><td><span class="pill p-ok">Delivered</span></td></tr>
+                        <tr><td><div class="who"><span class="av">DF</span><span>Dahir Farax<small>SHB-1204 · Warta Nabada</small></span></div></td><td>Residential tap</td><td class="amt">$18.50</td><td><span class="pill p-ok">Delivered</span></td></tr>
+                        <tr><td><div class="who"><span class="av">HA</span><span>Hodan Ahmed<small>SHB-8832 · Waberi</small></span></div></td><td>Commercial feed</td><td class="amt">$120.00</td><td><span class="pill p-blue">Out for delivery</span></td></tr>
+                        <tr class="bad"><td><div class="who"><span class="av">MN</span><span>Mahad Nuur<small>SHB-5521 · Yaqshid</small></span></div></td><td>Residential tap</td><td class="amt">$22.00</td><td><span class="pill p-bad">Overdue 14d</span></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="box">
+                    <h4>Reservoir &amp; supply <span class="pill p-ok">88% capacity</span></h4>
+                    <div class="meter"><div class="top"><b>Ceel-Dheer main tank #01</b><span>450,000 / 510,000 L</span></div><div class="track"><i style="width:88%"></i></div></div>
+                    <h4 style="margin-top:6px">Refill route #04 <span class="pill p-blue">In transit</span></h4>
+                    <div class="route"><span class="stp on">✓</span><span class="ln"><i style="width:100%"></i></span><span class="stp on">2</span><span class="ln"><i style="width:40%"></i></span><span class="stp">3</span></div>
+                    <div class="sample" style="justify-content:space-between"><span>Depot</span><span>In transit</span><span>Delivered</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Customers -->
+              <div class="pane" id="p-cust" role="tabpanel" aria-labelledby="t-cust">
+                <div class="p-head">
+                  <div><small>Maamulka macaamiisha</small><h3>Macaamiisha Shaba</h3><p>Search, filter and register customers. Unpaid accounts are flagged in red.</p></div>
+                  <div class="p-actions"><span class="mini-btn"><svg width="14" height="14"><use href="#i-dl"/></svg>Export CSV</span><span class="mini-btn pri">+ Add customer</span></div>
+                </div>
+                <div class="p-actions"><span class="pill p-blue" style="font-size:12px;padding:6px 12px">All 1,428</span><span class="pill p-ok" style="font-size:12px;padding:6px 12px">Active 1,380</span><span class="pill p-bad" style="font-size:12px;padding:6px 12px">Overdue 34</span><span class="pill p-grey" style="font-size:12px;padding:6px 12px">Suspended 14</span></div>
+                <div class="tbl-wrap">
+                  <table>
+                    <thead><tr><th>Full name</th><th>Phone</th><th>District</th><th>Group</th><th>Joined</th></tr></thead>
+                    <tbody>
+                      <tr><td><div class="who"><span class="av">AY</span><span>Amina Yusuf Warsame<small>MTR-8841-HOD</small></span></div></td><td class="tnum">+252 61 584 9201</td><td>Hodan</td><td><span class="pill p-ok">Residential</span></td><td>12 Jan 2025</td></tr>
+                      <tr><td><div class="who"><span class="av">HA</span><span>Hodan Ahmed Cilmi<small>MTR-1193-WAB</small></span></div></td><td class="tnum">+252 61 930 1144</td><td>Waberi</td><td><span class="pill p-blue">Commercial</span></td><td>18 Jun 2025</td></tr>
+                      <tr><td><div class="who"><span class="av">GE</span><span>Garaad Enterprises<small>IND-901</small></span></div></td><td class="tnum">+252 61 229 0088</td><td>Industrial zone</td><td><span class="pill p-grey">Industrial</span></td><td>22 Sep 2024</td></tr>
+                      <tr class="bad"><td><div class="who"><span class="av">MN</span><span>Mahad Nuur Jaamac<small>Unpaid bill: $42.50</small></span></div></td><td class="tnum">+252 61 556 7781</td><td>Yaqshid</td><td><span class="pill p-ok">Residential</span></td><td>05 Oct 2025</td></tr>
+                      <tr class="bad"><td><div class="who"><span class="av">XG</span><span>Xasan Cali Guuleed<small>Unpaid bill: $86.00</small></span></div></td><td class="tnum">+252 61 334 9912</td><td>Hawl-Wadaag</td><td><span class="pill p-blue">Commercial</span></td><td>29 Dec 2025</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Meters -->
+              <div class="pane" id="p-meter" role="tabpanel" aria-labelledby="t-meter">
+                <div class="p-head">
+                  <div><small>Meter operations · Telemetry</small><h3>Meters &amp; readings</h3><p>Smart meters report automatically. Manual readings can be uploaded in a batch CSV.</p></div>
+                  <div class="p-actions"><span class="mini-btn"><svg width="14" height="14"><use href="#i-upload"/></svg>Batch upload</span><span class="mini-btn pri">+ New reading</span></div>
+                </div>
+                <div class="kpis">
+                  <div class="kpi"><small>Total meters</small><b data-count="1380">1,380</b><span>1,190 residential · 190 commercial</span></div>
+                  <div class="kpi" style="--k:#1B7A3B"><small>Reporting</small><b style="color:#1B7A3B" data-count="1342">1,342</b><span><span class="up">97.2%</span> live</span></div>
+                  <div class="kpi" style="--k:#C2410C"><small>Offline / faults</small><b style="color:var(--bad)" data-count="26">26</b><span>Need inspection</span></div>
+                  <div class="kpi" style="--k:#4256C9"><small>Total usage</small><b data-count="48250">48,250</b><span>m³ this month</span></div>
+                </div>
+                <div class="two">
+                  <div class="tbl-wrap">
+                    <table>
+                      <thead><tr><th>Meter</th><th>Customer</th><th>Prev</th><th>Current</th><th>Used</th></tr></thead>
+                      <tbody>
+                        <tr><td><b style="color:var(--heading)">SHB-MTR-8841</b><small>Digital LoRa</small></td><td>Amina Yusuf Warsame</td><td class="tnum">142.4</td><td class="tnum">180.4</td><td><span class="pill p-ok">38.0 m³</span></td></tr>
+                        <tr><td><b style="color:var(--heading)">SHB-MTR-4029</b><small>Bulk commercial</small></td><td>Shabelle Hotel &amp; Suites</td><td class="tnum">1,240.0</td><td class="tnum">1,415.8</td><td><span class="pill p-blue">175.8 m³</span></td></tr>
+                        <tr class="bad"><td><b style="color:var(--bad)">SHB-MTR-9012</b><small>Sensor error</small></td><td>Faadumo Daahir Geelle</td><td class="tnum">310.2</td><td class="tnum">310.2</td><td><span class="pill p-bad">0.0 m³</span></td></tr>
+                        <tr><td><b style="color:var(--heading)">SHB-MTR-5521</b><small>Digital LoRa</small></td><td>Khadiijo Maxamed Guuleed</td><td class="tnum">87.5</td><td class="tnum">112.0</td><td><span class="pill p-ok">24.5 m³</span></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="box">
+                    <h4>District coverage</h4>
+                    <div class="meter"><div class="top"><b>Hodan</b><span>98.8% · 3.3 bar</span></div><div class="track"><i class="g" style="width:98.8%"></i></div></div>
+                    <div class="meter"><div class="top"><b>Waberi</b><span>96.4% · 3.1 bar</span></div><div class="track"><i class="g" style="width:96.4%"></i></div></div>
+                    <div class="meter"><div class="top"><b>Yaqshid</b><span>94.1% · 2.9 bar</span></div><div class="track"><i class="g" style="width:94.1%"></i></div></div>
+                    <div class="meter"><div class="top"><b>Warta Nabada</b><span>88.5% · 2.7 bar</span></div><div class="track"><i class="r" style="width:88.5%"></i></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Billing -->
+              <div class="pane" id="p-bill" role="tabpanel" aria-labelledby="t-bill">
+                <div class="p-head">
+                  <div><small>Billing &amp; invoicing · March 2026</small><h3>Maamulka Biilasha</h3><p>Create bills, track EVC Plus and Zaad payments, and send SMS reminders to overdue accounts.</p></div>
+                  <div class="p-actions"><span class="mini-btn">Batch bills</span><span class="mini-btn pri">+ New bill</span></div>
+                </div>
+                <div class="kpis">
+                  <div class="kpi"><small>Total bills</small><b data-count="1428">1,428</b><span>$28,450 billed</span></div>
+                  <div class="kpi" style="--k:#1B7A3B"><small>Settled</small><b style="color:#1B7A3B" data-count="24850" data-prefix="$">$24,850</b><span>EVC / Zaad <span class="up">94%</span></span></div>
+                  <div class="kpi" style="--k:#C2410C"><small>Overdue</small><b style="color:var(--bad)" data-count="3600" data-prefix="$">$3,600</b><span>34 customers · SMS blast</span></div>
+                  <div class="kpi" style="--k:#4256C9"><small>Avg. rate</small><b>$0.65</b><span>per m³ · tier 2</span></div>
+                </div>
+                <div class="tbl-wrap">
+                  <table>
+                    <thead><tr><th>Invoice</th><th>Customer</th><th>Usage</th><th>Amount</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <tr><td><b style="color:var(--heading)">INV-2026-0891</b><small>SHB-MTR-8841</small></td><td>Amina Yusuf Warsame</td><td class="tnum">38.0 m³</td><td class="amt">$24.70</td><td><span class="pill p-ok">Paid · EVC Plus</span></td></tr>
+                      <tr><td><b style="color:var(--heading)">INV-2026-0892</b><small>SHB-MTR-4029</small></td><td>Shabelle Hotel &amp; Suites</td><td class="tnum">175.8 m³</td><td class="amt">$140.64</td><td><span class="pill p-ok">Paid · Hormuud</span></td></tr>
+                      <tr class="bad"><td><b style="color:var(--bad)">INV-2026-0744</b><small>28 days late</small></td><td>Mahad Nuur Jaamac</td><td class="tnum">24.5 m³</td><td class="amt">$42.50</td><td><span class="pill p-bad">Overdue</span></td></tr>
+                      <tr><td><b style="color:var(--heading)">INV-2026-0899</b><small>Due in 4 days</small></td><td>Fartuun Cabdullaahi</td><td class="tnum">22.0 m³</td><td class="amt">$19.80</td><td><span class="pill p-warn">Pending</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Managers -->
+              <div class="pane" id="p-mgr" role="tabpanel" aria-labelledby="t-mgr">
+                <div class="p-head">
+                  <div><small>Manager registration &amp; access control</small><h3>Diiwaangelinta maareeyayaasha</h3><p>Add staff, give each one a role and branch, and require two-step sign-in.</p></div>
+                  <div class="p-actions"><span class="mini-btn">Roles &amp; permissions</span><span class="mini-btn pri">+ Add manager</span></div>
+                </div>
+                <div class="kpis">
+                  <div class="kpi"><small>Managers</small><b data-count="8">8</b><span>4 district · 2 sysadmin · 2 meter</span></div>
+                  <div class="kpi" style="--k:#1B7A3B"><small>Online now</small><b style="color:#1B7A3B" data-count="5">5</b><span>Network normal</span></div>
+                  <div class="kpi" style="--k:#4256C9"><small>2FA enabled</small><b>87.5%</b><span>7 of 8 accounts</span></div>
+                  <div class="kpi"><small>Actions today</small><b data-count="24">24</b><span>Logged for audit</span></div>
+                </div>
+                <div class="two">
+                  <div class="box">
+                    <h4>Add a manager <span class="pill p-blue">2FA required</span></h4>
+                    <div class="form-mini">
+                      <label>Full name</label><div class="inp typing"><span id="typeName" class="caret"></span></div>
+                      <label>Work email</label><div class="inp">staff@shaba.com</div>
+                      <label>Role</label><div class="inp">District manager</div>
+                    </div>
+                  </div>
+                  <div class="box">
+                    <h4>Access engine</h4>
+                    <div class="meter"><div class="top"><b>Two-step sign-in (SMS / TOTP)</b><span>7 / 8</span></div><div class="track"><i class="g" style="width:87.5%"></i></div></div>
+                    <p style="font-size:14px;color:var(--body);line-height:22px">Every new manager must verify with a second step before their account works. Each action is recorded so admins can review changes.</p>
+                    <div class="sparks"><i style="height:30%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:72%"></i><i style="height:60%"></i><i style="height:85%"></i><i style="height:50%"></i><i style="height:66%"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-notes">
+        <div class="admin-note reveal"><span class="ic"><svg width="22" height="22" aria-hidden="true"><use href="#i-gauge"/></svg></span><div><b>Read meters</b><p>Smart meters sync on their own. Field readings go in one by one or as a CSV batch.</p></div></div>
+        <div class="admin-note reveal"><span class="ic"><svg width="22" height="22" aria-hidden="true"><use href="#i-bill"/></svg></span><div><b>Bill and collect</b><p>Bills are worked out from usage and the tariff, then sent by SMS. Payments match automatically.</p></div></div>
+        <div class="admin-note reveal"><span class="ic"><svg width="22" height="22" aria-hidden="true"><use href="#i-chart"/></svg></span><div><b>Follow up and report</b><p>See who is overdue, send reminders in one click, and export reports as CSV or PDF.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section class="section flow" id="flow" aria-labelledby="flow-title">
+    <div class="wrap"><div class="flow-panel">
+      <div class="sec-head reveal">
+        <span class="label">How billing works</span>
+        <h2 id="flow-title">From a meter reading to a paid bill</h2>
+        <p>Every bill moves through the same five steps. The dashboard and the customer's phone stay in sync the whole way.</p>
+      </div>
+      <div class="pipeline">
+        <div class="pipe" aria-hidden="true"></div>
+        <svg class="drop" aria-hidden="true"><use href="#i-dropf"/></svg>
+        <div class="node reveal"><span class="ic"><svg width="30" height="30" aria-hidden="true"><use href="#i-signal"/></svg></span><div><span class="who-tag">System</span><h3>Meter is read</h3><p>The smart meter reports, or staff upload the reading.</p></div></div>
+        <div class="node reveal"><span class="ic"><svg width="30" height="30" aria-hidden="true"><use href="#i-bill"/></svg></span><div><span class="who-tag">Admin</span><h3>Bill is created</h3><p>Usage × tariff, for one customer or the whole cycle.</p></div></div>
+        <div class="node reveal"><span class="ic"><svg width="30" height="30" aria-hidden="true"><use href="#i-msg"/></svg></span><div><span class="who-tag">Customer</span><h3>SMS goes out</h3><p>The customer gets the amount and due date on their phone.</p></div></div>
+        <div class="node reveal"><span class="ic"><svg width="30" height="30" aria-hidden="true"><use href="#i-card"/></svg></span><div><span class="who-tag">Customer</span><h3>Paid by mobile</h3><p>E-Dahab or another wallet, straight from the app.</p></div></div>
+        <div class="node reveal"><span class="ic"><svg width="30" height="30" aria-hidden="true"><use href="#i-check"/></svg></span><div><span class="who-tag">Admin</span><h3>Marked as paid</h3><p>The payment is matched and shows on the dashboard.</p></div></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section features-sec" id="features" aria-labelledby="feat-title">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label">Features</span>
+        <h2 id="feat-title">Built for how Shaba works</h2>
+      </div>
+      <div class="features">
+        <div class="feature reveal"><span class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-signal"/></svg></span><h3>Smart meter telemetry</h3><p>Automatic readings from smart meters, with offline and fault alerts so nothing goes unbilled.</p><div class="who-row"><span class="pill p-blue">Admin</span></div></div>
+        <div class="feature reveal"><span class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-card"/></svg></span><h3>E-Dahab &amp; mobile money</h3><p>Customers pay with the mobile money they already use. Payments are matched to bills automatically.</p><div class="who-row"><span class="pill p-ok">Customer</span><span class="pill p-blue">Admin</span></div></div>
+        <div class="feature reveal"><span class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-msg"/></svg></span><h3>SMS bills and reminders</h3><p>New bills, due dates and overdue reminders go out by SMS, one at a time or to everyone overdue.</p><div class="who-row"><span class="pill p-ok">Customer</span><span class="pill p-blue">Admin</span></div></div>
+        <div class="feature reveal"><span class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-upload"/></svg></span><h3>Batch readings</h3><p>Field teams upload a whole route of readings as one CSV file instead of typing each one.</p><div class="who-row"><span class="pill p-blue">Admin</span></div></div>
+        <div class="feature reveal"><span class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-shield"/></svg></span><h3>Roles and two-step sign-in</h3><p>Each manager gets a role and a branch. Two-step sign-in and an action log keep accounts safe.</p><div class="who-row"><span class="pill p-blue">Admin</span></div></div>
+        <div class="feature reveal"><span class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-chart"/></svg></span><h3>Reports in Somali and English</h3><p>Revenue, collection and usage reports, exported as CSV or PDF. Screens use both languages.</p><div class="who-row"><span class="pill p-ok">Customer</span><span class="pill p-blue">Admin</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="contact" aria-labelledby="cta-title">
+    <div class="wrap">
+      <div class="cta-box reveal-scale">
+        <div style="position:relative;z-index:1">
+          <h2 id="cta-title">Questions about your bill?</h2>
+          <p>Talk to the Shaba Water team. Shirkada adeegyada bulshada Awdal.</p>
+          <div class="contact-lines">
+            <span><svg width="20" height="20" aria-hidden="true"><use href="#i-call"/></svg>+252 63 4456478 · +252 63 4456522</span>
+            <span><svg width="20" height="20" aria-hidden="true"><use href="#i-mail"/></svg>shabaco@gmail.com</span>
+            <span><svg width="20" height="20" aria-hidden="true"><use href="#i-pin"/></svg>Near Borama regional hospital, Borama, Awdal</span>
+          </div>
+        </div>
+        <!-- <div class="cta-actions">
+          <a class="btn btn-primary" href="https://shabawatercompany.com/Contact?enquiry=service">Contact Shaba <svg class="arr" width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <button class="btn btn-secondary" type="button" id="copyPhone">Copy phone number</button>
+        </div> -->
+        <svg class="wave-deco" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 Q25 18 50 30 T100 30 T150 30 T200 30 T250 30 T300 30 T350 30 T400 30 T450 30 T500 30 T550 30 T600 30 T650 30 T700 30 T750 30 T800 30 T850 30 T900 30 T950 30 T1000 30 T1050 30 T1100 30 T1150 30 T1200 30 T1250 30 V60 H0 Z"/></svg>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top" aria-label="Shaba Billing System home">
+          <svg aria-hidden="true" style="color:#FFFFFF"><use href="#mark"/></svg>
+          <span><b>SHABA</b><small>BILLING SYSTEM</small></span>
+        </a>
+        <p>Water services for Borama since 2003. A public-private partnership in the Awdal region of Somaliland.</p>
+      </div>
+      <div>
+        <h4>Billing system</h4>
+        <ul><li><a href="#customers">Customer app</a></li><li><a href="#admins">Admin dashboard</a></li><li><a href="#flow">How billing works</a></li><li><a href="#features">Features</a></li></ul>
+      </div>
+      <!-- <div>
+        <h4>Shaba Water</h4>
+        <ul><li><a href="https://shabawatercompany.com/About">About Shaba</a></li><li><a href="https://shabawatercompany.com/Projects">Projects</a></li><li><a href="https://shabawatercompany.com/Blog">Publications</a></li><li><a href="https://shabawatercompany.com/Reports">Reports</a></li></ul>
+      </div> -->
+      <!-- <div>
+        <h4>Follow</h4>
+        <ul><li><a href="https://www.facebook.com/profile.php?id=61573011164129">Facebook</a></li><li><a href="https://www.linkedin.com/company/shaba-water-company/">LinkedIn</a></li><li><a href="https://shabawatercompany.com/">shabawatercompany.com</a></li></ul>
+      </div> -->
+    </div>
+    <div class="foot-bottom"><span>© 2026 Shaba Water Company</span><span>Dashboard and app figures shown are sample data.</span></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var header = document.querySelector('.site-header');
+  function onScroll(){ header.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  var menuBtn = document.getElementById('menuBtn'), links = document.getElementById('navLinks');
+  menuBtn.addEventListener('click', function(){
+    var open = links.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  links.addEventListener('click', function(e){ if(e.target.closest('a')){ links.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); } });
+
+  // Count-up (numbers already show final values at rest)
+  function countUp(el){
+    if(reduce || el.dataset.done) return; el.dataset.done = 1;
+    var end = +el.dataset.count, pre = el.dataset.prefix || '', t0 = null, dur = 1200;
+    function f(t){ if(!t0) t0 = t; var p = Math.min((t-t0)/dur,1), e = 1-Math.pow(1-p,3);
+      el.textContent = pre + Math.round(end*e).toLocaleString('en-US'); if(p<1) requestAnimationFrame(f); }
+    requestAnimationFrame(f);
+  }
+  document.querySelectorAll('.hero [data-count]').forEach(countUp);
+
+  // Customer walkthrough
+  var demo = document.getElementById('custDemo');
+  var stepBtns = demo.querySelectorAll('.step-btn'), panes = demo.querySelectorAll('.screen-pane');
+  var cur = 0, timer = null, DUR = 6000, visible = false;
+  demo.style.setProperty('--dur', DUR + 'ms');
+  function show(i, user){
+    cur = i;
+    stepBtns.forEach(function(b,k){ b.setAttribute('aria-selected', k===i); b.tabIndex = k===i ? 0 : -1; var bar=b.querySelector('.bar'); bar.style.animation='none'; void bar.offsetWidth; bar.style.animation=''; });
+    panes.forEach(function(p,k){ p.classList.toggle('on', k===i); });
+    playPay(i===1);
+    if(user) restart();
+  }
+  var payTimers=[];
+  function playPay(on){
+    payTimers.forEach(clearTimeout); payTimers=[];
+    var pane=document.getElementById('sc1'), sc=pane.querySelector('.scr-scroll'), ins=pane.querySelectorAll('input[data-type]');
+    ins.forEach(function(el){ el.value=''; el.classList.remove('typing-on'); });
+    sc.classList.remove('go');
+    if(!on) return;
+    if(reduce){ ins.forEach(function(el){ el.value=el.dataset.type; }); return; }
+    var t=350;
+    ins.forEach(function(el){
+      var txt=el.dataset.type;
+      payTimers.push(setTimeout(function(){ el.classList.add('typing-on'); },t));
+      for(var c=1;c<=txt.length;c++){ (function(c){ payTimers.push(setTimeout(function(){ el.value=txt.slice(0,c); },t+c*65)); })(c); }
+      t+=txt.length*65+250;
+      payTimers.push(setTimeout(function(){ el.classList.remove('typing-on'); },t));
+    });
+    payTimers.push(setTimeout(function(){ sc.classList.add('go'); },t+150));
+  }
+  function restart(){ clearInterval(timer); if(!reduce && visible) timer = setInterval(function(){ show((cur+1)%4); }, DUR); }
+  stepBtns.forEach(function(b,k){
+    b.addEventListener('click', function(){ show(k, true); });
+    b.addEventListener('keydown', function(e){
+      if(e.key==='ArrowDown'||e.key==='ArrowRight'){ e.preventDefault(); show((k+1)%4,true); stepBtns[(k+1)%4].focus(); }
+      if(e.key==='ArrowUp'||e.key==='ArrowLeft'){ e.preventDefault(); show((k+3)%4,true); stepBtns[(k+3)%4].focus(); }
+    });
+  });
+  demo.addEventListener('mouseenter', function(){ demo.classList.add('paused'); clearInterval(timer); });
+  demo.addEventListener('mouseleave', function(){ demo.classList.remove('paused'); restart(); });
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(e){ visible = e.isIntersecting; if(visible) restart(); else clearInterval(timer); }); }, {threshold:.35}).observe(demo);
+  }
+  if(reduce) demo.classList.add('paused');
+
+  // Admin console tabs
+  var tabs = document.querySelectorAll('.c-tab'), cpanes = document.querySelectorAll('.pane');
+  var typeTimer = null;
+  function openTab(t){
+    tabs.forEach(function(x){ var on = x===t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; });
+    cpanes.forEach(function(p){ p.classList.toggle('on', p.id === t.getAttribute('aria-controls')); });
+    var p = document.getElementById(t.getAttribute('aria-controls'));
+    p.querySelectorAll('[data-count]').forEach(function(el){ el.dataset.done=''; countUp(el); });
+    if(p.id==='p-mgr') typeName();
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click', function(){ openTab(t); });
+    t.addEventListener('keydown', function(e){
+      var n = null;
+      if(e.key==='ArrowDown'||e.key==='ArrowRight') n = tabs[(i+1)%tabs.length];
+      if(e.key==='ArrowUp'||e.key==='ArrowLeft') n = tabs[(i-1+tabs.length)%tabs.length];
+      if(n){ e.preventDefault(); openTab(n); n.focus(); }
+    });
+  });
+  tabs.forEach(function(t,i){ t.tabIndex = i===0 ? 0 : -1; });
+  var consoleEl = document.getElementById('console');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ document.querySelectorAll('#p-dash [data-count]').forEach(countUp); io.disconnect(); } }); }, {threshold:.3});
+    io.observe(consoleEl);
+  }
+  function typeName(){
+    var el = document.getElementById('typeName'), txt = 'Cabdirisaaq Maxamed', i = 0;
+    clearInterval(typeTimer);
+    if(reduce){ el.textContent = txt; return; }
+    el.textContent = '';
+    typeTimer = setInterval(function(){ el.textContent = txt.slice(0, ++i); if(i>=txt.length) clearInterval(typeTimer); }, 70);
+  }
+  document.getElementById('typeName').textContent = 'Cabdirisaaq Maxamed';
+
+  // Copy phone
+  var cp = document.getElementById('copyPhone');
+  cp.addEventListener('click', function(){
+    var text = '+252 63 4456478';
+    function ok(){ cp.textContent = 'Copied'; setTimeout(function(){ cp.textContent = 'Copy phone number'; }, 1800); }
+    function sel(){ var r=document.createRange(); r.selectNodeContents(document.querySelector('.contact-lines span')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); cp.textContent='Selected, press copy'; }
+    try{ navigator.clipboard.writeText(text).then(ok, sel); }catch(err){ sel(); }
+  });
+})();
+</script>
+
+</body></html>
