@@ -12,6 +12,20 @@ Shaba Billing System is a water-utility management platform for administering cu
 
 Each project has its own `package.json` and dependencies. Install dependencies and run scripts from that project's directory.
 
+## Screenshots
+
+### Customer mobile app
+
+| Home | Unpaid bills |
+| --- | --- |
+| ![Customer home screen](./docs/screenshots/customer-home.jpeg) | ![Customer unpaid bills screen](./docs/screenshots/customer-bills.jpeg) |
+
+### Administration dashboard
+
+| Dashboard | Reports |
+| --- | --- |
+| ![Administration dashboard](./docs/screenshots/admin-dashboard.png) | ![Administration reports](./docs/screenshots/admin-reports.png) |
+
 ## Architecture
 
 ```mermaid
