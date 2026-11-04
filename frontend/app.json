@@ -30,6 +30,12 @@
           "resizeMode": "contain"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7165ebf5-8a05-4ea6-94af-727039118b8f"
+      }
+    },
+    "owner": "abdisalam-mohamed"
   }
 }
